@@ -3,7 +3,7 @@
 include("src/loader.jl")
 include("in/G_test.jl")
 include("in/S.jl")
-include("src/dataCSP.jl")
+include("src/dataStructure.jl")
 include("src/solve.jl")
 
 function CP()

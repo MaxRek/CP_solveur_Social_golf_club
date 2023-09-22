@@ -11,15 +11,3 @@
 function propagation()
     println("Propagation a faire")
 end
-
-function a()
-    println("a")
-end
-
-function b()
-    println("b")
-end
-
-function c()
-    println("c")
-end
