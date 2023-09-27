@@ -110,15 +110,58 @@ function subDomain(d1 :: Domain, d2 :: Domain)
     return dr
 end
 
+function difference(d1 :: Domain, d2 :: Domain)
+    dr = true
+    #cardinalité de F = max peut changer selon le nombre d'éléments dans up
+    #min va changer si 
+    return dr
+end
+
+
 function addUp(d :: Domain, v :: Vector{Int64})
-    d.up = append!(v,d.up)
-    d.up = sort(d.up)
+    for j in v
+        stop = false
+        i = 1
+        while(i < size(d.up)[1] && !stop )
+            if(d.up[i+1]<j)
+                i+=1
+            else
+                stop = true
+            end
+        end
+        if(!stop)
+            append!(d.up,j)
+        else
+            insert!(d.up,i+1,j)
+        end
+    end
     return d
 end
 
     
 function addLb(d :: Domain, v :: Vector{Int64})
-    d.lb = append!(v,d.lb)
-    d.lb = sort(d.lb)
+    for j in v
+        stop = false
+        i = 1
+        while(i < size(d.lb)[1] && !stop )
+            if(d.lb[i+1]<j)
+                i+=1
+            else
+                stop = true
+            end
+        end
+        if(!stop)
+            append!(d.lb,j)
+        else
+            insert!(d.lb,i+1,j)
+        end
+    end
+    if(size(d.lb)[1]>d.minC)
+        d.minC = size(d.lb)[1]
+    end
+    if(size(d.up)[1]<size(d.lb)[1])
+        d.maxC = d.minC
+    end
+    
     return d
 end

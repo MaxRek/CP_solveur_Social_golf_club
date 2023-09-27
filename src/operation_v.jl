@@ -118,8 +118,27 @@ function subDomain_v(io,d1 :: Domain, d2 :: Domain)
 end
 
 function addUp(io,d :: Domain, v :: Vector{Int64})
-    d.up = append!(v,d.up)
-    d.up = sort(d.up)
+    for j in v
+        println(d)
+        println(j,"a ajouter")
+        stop = false
+        i = 1
+        println("size(d.up) =",size(d.up))
+        while(i < size(d.up)[1] && !stop )
+            println(i)
+            if(d.up[i+1]<j)
+                i+=1
+            else
+                println(i,",d.up[i] = ",d.up[i],", d.up[i+1] = ",d.up[i+1]," )")
+                stop = true
+            end
+        end
+        if(!stop)
+            append!(d.up,j)
+        else
+            insert!(d.up,i+1,j)
+        end
+    end
     return d
 end
 
