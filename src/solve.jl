@@ -14,7 +14,11 @@
 #   endwhile
 #   return null
 
-function solve(P,X,D,C)
-    print("je solve")
+function solve(io,P,X,D,C)
+    print(io,"je solve")
+end
+
+function solve_v(io,P,X,D,C)
+    print(io,"je solve, mais verbeusement")
 end
 
