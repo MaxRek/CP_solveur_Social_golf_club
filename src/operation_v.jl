@@ -1,4 +1,4 @@
-function union(d1 :: Domain, d2 :: Domain)
+function union_v(io,d1 :: Domain, d2 :: Domain)
     dr = Domain(Vector{Int64}(),Vector{Int64}(),0,0)
     println(d2)
     println(d1)
@@ -38,7 +38,7 @@ function union(d1 :: Domain, d2 :: Domain)
     return dr
 end
 
-function intersect(d1 :: Domain, d2 :: Domain)
+function intersect_v(io,d1 :: Domain, d2 :: Domain)
     dr = Domain(Vector{Int64}(),Vector{Int64}(),0,0)
     
     #bounds
@@ -71,17 +71,22 @@ function intersect(d1 :: Domain, d2 :: Domain)
     return dr
 end
 
-function subDomain(d1 :: Domain, d2 :: Domain)
+function subDomain_v(io,d1 :: Domain, d2 :: Domain)
     #Is d1 subDomain of d2 ?
     dr = false
     #verify cardinalities
     if(d1.minC<=d2.minC)
+        println(d1.minC," <= ", d2.minC)
         if(d1.maxC<=d2.maxC)
+            println(d1.maxC," <= ", d2.maxC)
+            #Checking lower bounds
+            println(size(d1.lb)[1], ", ",(size(d2.lb))[1])
+
             if( size(d1.lb)[1] == (size(d2.lb))[1])
-                #Checking lower bounds
                 bool = true
                 i = 1
                 while(bool && i <= size(d1.lb)[1] )
+                    println(d1.lb[i], ", ", d2.lb[i])
                     if( d1.lb[i] == d2.lb[i])
                         i += 1
                     else
@@ -92,6 +97,7 @@ function subDomain(d1 :: Domain, d2 :: Domain)
                 if(bool)
                     i = 1
                     while(bool && i <= size(d1.up)[1])
+                        println("d1.up = ", d1.up[i] in d2.up)
                         if(d1.up[i] in d2.up)
                             i+=1
                         else
@@ -100,6 +106,7 @@ function subDomain(d1 :: Domain, d2 :: Domain)
                     end
                     if (bool)
                         #upper bound OK, d1 subDomain of d2
+                        println("all check, d1 subdomain of d2")
                         dr = true
                     end
                 end
@@ -110,14 +117,14 @@ function subDomain(d1 :: Domain, d2 :: Domain)
     return dr
 end
 
-function addUp(d :: Domain, v :: Vector{Int64})
+function addUp(io,d :: Domain, v :: Vector{Int64})
     d.up = append!(v,d.up)
     d.up = sort(d.up)
     return d
 end
 
     
-function addLb(d :: Domain, v :: Vector{Int64})
+function addLb(io,d :: Domain, v :: Vector{Int64})
     d.lb = append!(v,d.lb)
     d.lb = sort(d.lb)
     return d
