@@ -6,8 +6,8 @@ mutable struct Domain
 end
 
 mutable struct Constraint
-    left :: Int64
-    right :: Int64
+    left :: Domain
+    right :: Domain
     op :: String
 end
 

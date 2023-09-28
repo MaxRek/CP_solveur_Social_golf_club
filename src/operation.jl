@@ -111,9 +111,61 @@ function subDomain(d1 :: Domain, d2 :: Domain)
 end
 
 function difference(d1 :: Domain, d2 :: Domain)
-    dr = true
+    dr = Domain(Vector{Int64}(),Vector{Int64}(),0,0)
     #cardinalité de F = max peut changer selon le nombre d'éléments dans up
-    #min va changer si 
+    #min va changer si le nb d'leme dans lb
+    
+    #lb
+    dr.lb = copy(d1.lb)
+    dlb = 0 #nombre de retraits dans borne inf
+    for i in d2.lb
+        j = 1
+        stop = false
+        while(j<=size(dr.lb)[1] && !stop)    
+            if(dr.lb[j]!=i)
+                j += 1
+            else
+                stop = true
+                dlb += 1
+            end
+        end
+        if stop
+            popat!(dr.lb,j)
+        end
+    end
+
+    #up
+    dr.up = copy(d1.up)
+    dup = 0 #nombre de retraits dans borne sup
+
+    for i in d2.up
+        j = 1
+        stop = false
+        while(j<=size(dr.up)[1] && !stop)    
+            if(dr.up[j]!=i)
+                j += 1
+            else
+                stop = true
+            end
+        end
+        if stop
+            popat!(dr.up,j)
+            dup += 1
+        end
+    end
+
+    #cardinalities
+    dr.minC = d1.minC - dlb
+    dr.maxC = d1.maxC - dup
+
+    if(dr.minC < size(dr.lb)[1])
+        dr.minC = size(dr.lb)[1]
+    end
+    if(size(elem_array(dr.lb,dr.up))[1]<dr.maxC)
+        dr.maxC = size(elem_array(dr.lb,dr.up))[1]
+    end
+    
+
     return dr
 end
 
@@ -156,12 +208,23 @@ function addLb(d :: Domain, v :: Vector{Int64})
             insert!(d.lb,i+1,j)
         end
     end
+
     if(size(d.lb)[1]>d.minC)
         d.minC = size(d.lb)[1]
     end
-    if(size(d.up)[1]<size(d.lb)[1])
+    if( d.minC > d.maxC)
         d.maxC = d.minC
     end
-    
+
     return d
+end
+
+function elem_array(a :: Vector{Int64},b :: Vector{Int64})
+    c = copy(a)
+    for e in b
+        if(!(e in a))
+            append!(c,e)
+        end
+    end
+    return c
 end
