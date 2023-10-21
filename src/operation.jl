@@ -1,7 +1,7 @@
-function union(d1 :: Domain, d2 :: Domain)
+function union_domain(d1 :: Domain, d2 :: Domain)
     dr = Domain(Vector{Int64}(),Vector{Int64}(),0,0)
-    println(d2)
-    println(d1)
+    #println("d1 = ",d1)
+    #println("d2 = ",d2)
     dr.lb = copy(d1.lb)
 
     #bounds
@@ -13,6 +13,10 @@ function union(d1 :: Domain, d2 :: Domain)
             push!(notin,i)
             bool = true
         end
+    end
+
+    if(bool)
+        addLb(dr,notin)
     end
 
     #Upper
@@ -28,17 +32,31 @@ function union(d1 :: Domain, d2 :: Domain)
     end
 
     if(bool)
-        dr = addUp(dr,notin)
+        addUp(dr,notin)
+    end
+
+    for i in dr.lb
+        j = 1
+        stop = false
+        while(j<=size(dr.up)[1] && !stop)    
+            if(dr.up[j]!=i)
+                j += 1
+            else
+                stop = true
+            end
+        end
+        if(stop)
+            popat!(dr.up,j)
+        end
     end
 
     #cardinalities
-    dr.minC = d1.minC+d2.minC
-    dr.maxC = d1.maxC+d2.maxC
+    cardinalities(d1,d2,dr)
 
     return dr
 end
 
-function intersect(d1 :: Domain, d2 :: Domain)
+function intersect_domain(d1 :: Domain, d2 :: Domain)
     dr = Domain(Vector{Int64}(),Vector{Int64}(),0,0)
     
     #bounds
@@ -65,8 +83,7 @@ function intersect(d1 :: Domain, d2 :: Domain)
     dr.up = e
 
     #cardinalities
-    dr.minC = min(d1.minC,d2.minC)
-    dr.maxC = min(d1.maxC,d2.maxC)
+    cardinalities(d1,d2,dr)
 
     return dr
 end
@@ -110,7 +127,7 @@ function subDomain(d1 :: Domain, d2 :: Domain)
     return dr
 end
 
-function difference(d1 :: Domain, d2 :: Domain)
+function difference_domain(d1 :: Domain, d2 :: Domain)
     dr = Domain(Vector{Int64}(),Vector{Int64}(),0,0)
     #cardinalité de F = max peut changer selon le nombre d'éléments dans up
     #min va changer si le nb d'leme dans lb
@@ -172,51 +189,54 @@ end
 
 function addUp(d :: Domain, v :: Vector{Int64})
     for j in v
-        stop = false
-        i = 1
-        while(i < size(d.up)[1] && !stop )
-            if(d.up[i+1]<j)
-                i+=1
+        if(!(j in d.up)&&!(j in d.lb))
+            if(j>d.up[1])
+                stop = false
+                i = 1
+                while(i < size(d.up)[1] && !stop )
+                    if(d.up[i+1]<j)
+                        i+=1
+                    else
+                        stop = true
+                    end
+                end
+                if(!stop)
+                    append!(d.up,j)
+                else
+                    insert!(d.up,i+1,j)
+                end
             else
-                stop = true
+                insert!(d.up,1,j)
             end
         end
-        if(!stop)
-            append!(d.up,j)
-        else
-            insert!(d.up,i+1,j)
-        end
     end
-    return d
 end
 
     
 function addLb(d :: Domain, v :: Vector{Int64})
     for j in v
-        stop = false
-        i = 1
-        while(i < size(d.lb)[1] && !stop )
-            if(d.lb[i+1]<j)
-                i+=1
+        if(!(j in d.lb))
+            #println("j =  ",j,", d.lb = ",d.lb[1]," ")
+            if(j>d.lb[1])
+                stop = false
+                i = 1
+                while(i < size(d.lb)[1] && !stop )
+                    if(d.lb[i+1]<j)
+                        i+=1
+                    else
+                        stop = true
+                    end
+                end
+                if(!stop)
+                    append!(d.lb,j)
+                else
+                    insert!(d.lb,i+1,j)
+                end
             else
-                stop = true
+                insert!(d.lb,1,j)
             end
         end
-        if(!stop)
-            append!(d.lb,j)
-        else
-            insert!(d.lb,i+1,j)
-        end
     end
-
-    if(size(d.lb)[1]>d.minC)
-        d.minC = size(d.lb)[1]
-    end
-    if( d.minC > d.maxC)
-        d.maxC = d.minC
-    end
-
-    return d
 end
 
 function elem_array(a :: Vector{Int64},b :: Vector{Int64})
@@ -227,4 +247,13 @@ function elem_array(a :: Vector{Int64},b :: Vector{Int64})
         end
     end
     return c
+end
+
+function cardinalities_union(d1 :: Domain, d2 :: Domain, dr :: Domain)
+    e1lb = d1.minC - size(d1.lb)[1] ; e2lb = d2.minC - size(d2.lb)[1]
+    dr.minC = size(dr.lb)[1] + e1lb + e2lb
+
+    e1up = size(d1.up)[1] - d1.maxC ; e2up = size(d2.up)[1] - d2.maxC 
+    println("e1lb = ",e1lb,", e2lb = ",e2lb, ", e1up = ",e1up,", e2up = ",e2up)
+    dr.maxC = size(dr.up)[1]+dr.minC-e1lb-e2lb
 end

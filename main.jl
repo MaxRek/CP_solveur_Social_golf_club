@@ -10,25 +10,26 @@ include("in/S.jl")
 include("src/dataStructure.jl")
 include("src/solve.jl")
 
-function CP()
+function CP( v :: String = "n")
 
     nameLog = Dates.format(now(),"ddmm-HHMM")
 
     io = open(String("out/log_"*nameLog*".txt"), "w")
     println("Hello world")
     println("Solveur_CP")
-    println("Verbosité ? (O pour Oui)")
-    
-    i = readline()
-    if (i == "O" || i == "o")
+
+    if(v == "n")
+        println("Verbeux ? (O pour Oui)")
+        v = readline()
+    end
+
+    if (v == "O" || v == "o")
         propagation_v(io)
         solve_v(io,1,2,3,4)   
     else
         propagation(io)
         solve(io,1,2,3,4)
     end
-    
-    
 
     close(io)
 
