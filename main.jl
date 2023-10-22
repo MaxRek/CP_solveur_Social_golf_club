@@ -6,30 +6,66 @@ using Dates
 
 include("src/loader.jl")
 include("in/G_test.jl")
-include("in/S.jl")
+include("in/S_test.jl")
 include("src/dataStructure.jl")
 include("src/solve.jl")
+include("src/operation.jl")
 
-function CP( v :: String = "n")
+S = CSP(
+        Vector{Int64}([1,2,3,4,5]),
+        Vector{Domain}([
+            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1),
+            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1),
+            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1),
+            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1),
+            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1)
+        ])
+        ,
+        Vector{Constraint}([
+            Constraint(1,2,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(1,3,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(1,4,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(1,5,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(2,3,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(2,4,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(2,5,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(3,4,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(3,5,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(4,5,"intersect", Domain([],[1,2,3,4,5],1,1))
+        ])
+    )
+
+function CP()
 
     nameLog = Dates.format(now(),"ddmm-HHMM")
 
     io = open(String("out/log_"*nameLog*".txt"), "w")
-    println("Hello world")
-    println("Solveur_CP")
+    
+    S = CSP(
+        Vector{Int64}([1,2,3,4,5]),
+        Vector{Domain}([
+            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1),
+            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1),
+            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1),
+            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1),
+            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1)
+        ])
+        ,
+        Vector{Constraint}([
+            Constraint(1,2,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(1,3,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(1,4,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(1,5,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(2,3,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(2,4,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(2,5,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(3,4,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(3,5,"intersect", Domain([],[1,2,3,4,5],1,1)),
+            Constraint(4,5,"intersect", Domain([],[1,2,3,4,5],1,1))
+        ])
+    )
 
-    if(v == "n")
-        println("Verbeux ? (O pour Oui)")
-        v = readline()
-    end
-
-    if (v == "O" || v == "o")
-        propagation_v(io)
-        solve_v(io,1,2,3,4)   
-    else
-        propagation(io)
-        solve(io,1,2,3,4)
-    end
+    solve(io, S)
 
     close(io)
 

@@ -6,13 +6,14 @@ mutable struct Domain
 end
 
 mutable struct Constraint
-    left :: Domain
-    right :: Domain
+    left :: Int64
+    right :: Int64
     op :: String
+    result :: Domain
 end
 
 mutable struct CSP
     X :: Vector{Int64}
-    D :: Tuple{Domain}
+    D :: Vector{Domain}
     C :: Vector{Constraint}
 end

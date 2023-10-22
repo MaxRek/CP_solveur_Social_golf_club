@@ -14,11 +14,36 @@
 #   endwhile
 #   return null
 
-function solve(io,P,X,D,C)
+using DataStructures
+
+function solve(io,P :: CSP)
     print(io,"je solve")
+    pile = Stack{CSP}()
+    push!(pile, P)
+    gardefou = 1
+    stop = false
+
+    while(!isempty(pile) && gardefou <= 20 && !stop)
+        Pp = pop!(pile)
+        println(io, "_____________\nNouvelle itération \n Pp = ",Pp,"\n gardefou = ", gardefou)
+        propagation(io, Pp)
+        if(is_ended_CSP(io,Pp))
+            println(io, "Pp is ended, checking for feasible on")
+            if(feasible_CSP(io,Pp))
+                stop = true
+            else
+                println(io, "Pp isn't valid, moving on")
+            end
+        else
+            println(io, "Pp isn't ended, spliting Pp")
+            split(io, Pp, pile)
+        end
+        gardefou += 1
+    end
+
 end
 
-function solve_v(io,P,X,D,C)
-    print(io,"je solve, mais verbeusement")
+function feasible_CSP(io, P :: CSP)
+    return true
 end
 

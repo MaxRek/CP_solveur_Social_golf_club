@@ -8,11 +8,8 @@
 #           where pour chq g dans G, il existe un xk appartenant à var(g), D'k != Dk -> g appartient à G'
 #               #functions whose at least one variable has been modified must be woken
 
-function propagation(io)
-    println(io,"Je propage")
-end
-
-function propagation_v(io)    
-    println("Je propage, mais verbeusement")
-    println(io, "Je propage, mais verbeusement")
+function propagation(io, P :: CSP)
+    Pp = P
+    println(io,"__________\n ça propage sec \n__________")
+    return Pp
 end

@@ -353,7 +353,6 @@ function addLb(d :: Domain, v :: Vector{Int64})
     for j in v
         if(!(j in d.lb))
             if(size(d.lb)[1]!=0)
-                #println("j =  ",j,", d.lb = ",d.lb[1]," ")
                 if(j>d.lb[1])
                     stop = false
                     i = 1
@@ -375,6 +374,17 @@ function addLb(d :: Domain, v :: Vector{Int64})
             else
                 append!(d.lb,j)
             end
+            d.minC += 1
+        end
+    end
+end
+
+function move_up_to_lb(d :: Domain, v :: Vector{Int64})
+    for j in v
+        if j in d.up
+            addLb(d,j)
+
+
         end
     end
 end
@@ -382,24 +392,40 @@ end
 function del(d :: Domain, v :: Vector{Int64})
     for j in v
         if(j in d.lb)
-            if(j>d.up[1])
+            if(j!=d.lb[1])
                 stop = false
                 i = 1
-                while(i < size(d.up)[1] && !stop )
-                    if(d.up[i+1]<j)
+                while(i <= size(d.lb)[1] && !stop )
+                    if(d.lb[i]!=j)
                         i+=1
                     else
                         stop = true
                     end
                 end
                 if(stop)
-                    popat!(d.up,j)
+                    popat!(d.lb,i)
                 end
             else
-                insert!(d.up,1,j)
+                popat!(d.lb,1)
             end
         else
             if(j in d.up)
+                if(j!=d.up[1])
+                    stop = false
+                    i = 2
+                    while(i <= size(d.up)[1] && !stop )
+                        if(d.up[i]!=j)
+                            i+=1
+                        else
+                            stop = true
+                        end
+                    end
+                    if(stop)
+                        popat!(d.up,i)
+                    end
+                else
+                    popat!(d.up,1)
+                end
             end
         end
     end
