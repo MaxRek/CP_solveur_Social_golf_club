@@ -62,32 +62,40 @@ function intersect_domain(d1 :: Domain, d2 :: Domain)
 
     #bounds
     #lower
-    e = Int64[]
-
+    elb = Int64[]
+    eup = Int64[]
+    
     for i in d1.lb
-        if(i in d2.lb || i in d2.up)
-            push!(e,i)
+        if(i in d2.lb)
+            push!(elb,i)
+        else
+            if(i in d2.up)
+                push!(eup,i)
+            end
         end
     end
+
+    addLb(dr,elb)
+    addUp(dr,eup)
+
+    eup = Int64[]
 
     for i in d2.lb
-        if(i in d1.up)
-            push!(e,i)
+        if(i in d1.up && !(i in dr.lb))
+            push!(eup,i)
         end
     end
 
-    dr.lb = e
-
-    #Upper
-    e = Int64[]
+    addUp(dr,eup)
+    eup = Int64[]
 
     for i in d1.up
-        if(i in d2.up && !(i in dr.lb))
-            push!(e,i)
+        if(i in d2.up && !(i in dr.up))
+            push!(eup,i) 
         end
     end
 
-    dr.up = e
+    addUp(dr,eup)
 
     #cardinalities
     intersect_cardinalities(d1,d2,dr)
@@ -136,39 +144,59 @@ end
 
 function difference_domain(d1 :: Domain, d2 :: Domain)
     dr = Domain(Vector{Int64}(),Vector{Int64}(),0,0)
-    e = Vector{Int64}()
+    elb = Vector{Int64}()
+    eup = Vector{Int64}()
+
     
     for i in d1.lb 
-        if(!(i in d2.lb) && !(i in d2.up))
-            append!(e,i)
+        if(!(i in d2.lb))
+            if(!(i in d2.up))
+                append!(elb,i)
+            else
+                append!(eup,i)
+            end
         end
     end
+
+    addLb(dr, elb)
+    addUp(dr, eup)
+
+    elb = Vector{Int64}()
+    eup = Vector{Int64}()
 
     for i in d2.lb
-        if(!(i in d1.lb) && !(i in d1.up)) 
-            append!(e,i)
+        if(!(i in d1.lb)) 
+            if(!(i in d1.up && !(i in dr.lb)))
+                append!(elb,i)
+            else
+                if(!(i in dr.up))
+                    append!(eup,i)
+                end
+            end
         end
     end
 
-    println("difference_domain\nlb, e = ",e)
-    addLb(dr,e)
+    #println("difference_domain\nlb, e = ",e)
+    addLb(dr,elb)
+    addUp(dr, eup)
 
-    e = Vector{Int64}()
+
+    eup = Vector{Int64}()
 
     for i in d1.up
-        if(!(i in d2.lb) && !(i in d2.up))
-            append!(e,i)
+        if(!(i in dr.up))
+            append!(eup,i)
         end
     end
 
     for i in d2.up
-        if(!(i in d1.lb) && !(i in d1.up)) 
-            append!(e,i)
+        if(!(i in dr.up)) 
+            append!(eup,i)
         end
     end
 
-    println("difference_domain\nup, e = ",e)
-    addUp(dr, e)
+    #println("difference_domain\nup, e = ",e)
+    addUp(dr, eup)
 
     difference_cardinalities(d1,d2,dr)
 
@@ -408,8 +436,8 @@ function union_cardinalities(d1 :: Domain, d2 :: Domain, dr :: Domain)
 end
 
 function intersect_cardinalities(d1 :: Domain, d2 :: Domain, dr :: Domain)
-    dr.minC = max(d1.minC,d2.minC)
-    dr.maxC = min(d1.maxC,d2.maxC)
+    dr.minC = size(dr.lb)[1]
+    dr.maxC = size(dr.up)[1]+dr.minC
 
     e = size(elem_array(dr.lb,dr.up))[1]
     #print("e = ",e,", dr.maxC = ",dr.maxC)
@@ -422,8 +450,9 @@ function intersect_cardinalities(d1 :: Domain, d2 :: Domain, dr :: Domain)
 end
 
 function difference_cardinalities(d1 :: Domain, d2 :: Domain, dr :: Domain)
-    dr.minC = min(d1.minC,d2.minC)
-    dr.maxC = max(d1.maxC,d2.maxC)
+    println("dr = ",dr)
+    dr.minC = size(dr.lb)[1]
+    dr.maxC = size(dr.up)[1]+dr.minC
 
     e = size(elem_array(dr.lb,dr.up))[1]
     #print("e = ",e,", dr.maxC = ",dr.maxC)

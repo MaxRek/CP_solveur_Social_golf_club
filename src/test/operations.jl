@@ -58,20 +58,20 @@ if(
 
     d1 = Domain([1], [3, 4], 1, 3)
     d2 = Domain([1, 2], [4, 5, 6], 2, 5)
-    d3 = Domain([1], [4], 2, 2)
+    d3 = Domain([1], [4], 1, 2)
 
     d4 = Domain([10], [3, 4, 5, 6], 3, 3)
     d5 = Domain([5,6], [2, 4, 7, 8], 2, 4)
-    d6 = Domain([5,6], [4], 3, 3)
+    d6 = Domain([], [4,5,6], 0, 3)
 
     if(compare_domain(intersect_domain(d1,d2),d3))
         println(io,"Intersect simple : OK\n")
     else
         println(io,"ERREUR : Intersect Simple")
         println(io,"----------------------------------")
-        println(io,"d1 = ",d4)
-        println(io,"d2 = ",d5)
-        println(io,"d3 = ",d6)
+        println(io,"d1 = ",d1)
+        println(io,"d2 = ",d2)
+        println(io,"d3 = ",d3)
         println(io,"dr = ",intersect_domain(d1,d2))
         println(io,"----------------------------------\n")
     end
@@ -91,11 +91,11 @@ if(
 
     d1 = Domain([1], [3, 4], 1, 3)
     d2 = Domain([1, 2], [4, 5, 6], 2, 5)
-    d3 = Domain([2], [3,5,6], 1, 4)
+    d3 = Domain([2], [3,4,5,6], 1, 5)
 
     d4 = Domain([10], [3, 4, 5, 6], 3, 3)
     d5 = Domain([5, 6], [2, 4, 7, 8], 2, 4)
-    d6 = Domain([10], [2, 3, 7, 8], 2, 4)
+    d6 = Domain([10], [2, 3, 4, 5, 6, 7, 8], 1, 8)
 
     if(compare_domain(difference_domain(d1,d2),d3))
         println(io,"Difference simple : OK\n")
