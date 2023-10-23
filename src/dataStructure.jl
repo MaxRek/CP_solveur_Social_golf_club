@@ -6,9 +6,9 @@ mutable struct Domain
 end
 
 mutable struct Constraint
-    left :: Domain
-    right :: Domain
-    op :: String
+    domains :: Vector{Int64}
+    opérande :: String
+    result :: Domain
 end
 
 mutable struct CSP
