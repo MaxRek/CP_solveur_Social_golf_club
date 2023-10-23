@@ -7,7 +7,7 @@ end
 
 mutable struct Constraint
     domains :: Vector{Int64}
-    opérande :: String
+    operande :: String
     result :: Domain
 end
 
