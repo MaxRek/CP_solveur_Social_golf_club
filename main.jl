@@ -3,8 +3,9 @@
 import Dates
 
 using Dates
+using DataStructures
 
-include("src/loader.jl")
+
 include("in/G_test.jl")
 include("in/S_test.jl")
 include("src/dataStructure.jl")
@@ -71,4 +72,14 @@ function CP()
 
 end
 
-CP()
+nameLog = Dates.format(now(),"ddmm-HHMM")
+io = open(String("out/log_rapide_"*nameLog*".txt"), "w")
+
+s1 = deepcopy(S)
+s1.D[1] = split_add_up_in_lb(io, s1.D[1])
+s1.D[1] = split_add_up_in_lb(io, s1.D[1])
+s1.D[1] = split_add_up_in_lb(io, s1.D[1])
+s1.D[1] = split_add_up_in_lb(io, s1.D[1])
+s1.D[1] = split_add_up_in_lb(io, s1.D[1])
+
+close(io)

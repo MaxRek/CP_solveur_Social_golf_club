@@ -14,10 +14,8 @@
 #   endwhile
 #   return null
 
-using DataStructures
-
 function solve(io,P :: CSP)
-    print(io,"je solve")
+    println(io,"je solve")
     pile = Stack{CSP}()
     push!(pile, P)
     gardefou = 1
@@ -36,7 +34,9 @@ function solve(io,P :: CSP)
             end
         else
             println(io, "Pp isn't ended, spliting Pp")
-            split(io, Pp, pile)
+            P1, P2 = split(io, Pp, pile)
+            push!(pile, P1)
+            push!(pile, P2)
         end
         gardefou += 1
     end
@@ -47,3 +47,18 @@ function feasible_CSP(io, P :: CSP)
     return true
 end
 
+function is_ended_CSP(io, Pp :: CSP)
+    bool = false ; stop = false
+    i = 1
+    while(i <= size(Pp.D)[1] && !stop)
+        if(size(d.lb)[1] < d.minC && d.minC < d.maxC)
+            stop = true
+        end
+        i += 1
+    end
+    if(!stop)
+        bool = true
+    end
+
+    return bool
+end

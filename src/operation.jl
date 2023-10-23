@@ -352,29 +352,32 @@ end
 function addLb(d :: Domain, v :: Vector{Int64})
     for j in v
         if(!(j in d.lb))
-            if(size(d.lb)[1]!=0)
-                if(j>d.lb[1])
-                    stop = false
-                    i = 1
-                    while(i < size(d.lb)[1] && !stop )
-                        if(d.lb[i+1]<j)
-                            i+=1
-                        else
-                            stop = true
+            if(size(d.lb)[1]>=d.maxC)
+                println("ERREUR : size(d.lb)[1]>=d.maxC, size(d.lb)[1] = ",size(d.lb)[1],", d.maxC = ",d.maxC)
+            else
+                if(size(d.lb)[1]!=0)
+                    if(j>d.lb[1])
+                        stop = false
+                        i = 1
+                        while(i < size(d.lb)[1] && !stop )
+                            if(d.lb[i+1]<j)
+                                i+=1
+                            else
+                                stop = true
+                            end
                         end
-                    end
-                    if(!stop)
-                        append!(d.lb,j)
+                        if(!stop)
+                            append!(d.lb,j)
+                        else
+                            insert!(d.lb,i+1,j)
+                        end
                     else
-                        insert!(d.lb,i+1,j)
+                        insert!(d.lb,1,j)
                     end
                 else
-                    insert!(d.lb,1,j)
+                    append!(d.lb,j)
                 end
-            else
-                append!(d.lb,j)
             end
-            d.minC += 1
         end
     end
 end
@@ -391,40 +394,44 @@ end
 
 function del(d :: Domain, v :: Vector{Int64})
     for j in v
-        if(j in d.lb)
-            if(j!=d.lb[1])
-                stop = false
-                i = 1
-                while(i <= size(d.lb)[1] && !stop )
-                    if(d.lb[i]!=j)
-                        i+=1
-                    else
-                        stop = true
-                    end
-                end
-                if(stop)
-                    popat!(d.lb,i)
-                end
-            else
-                popat!(d.lb,1)
-            end
-        else
-            if(j in d.up)
-                if(j!=d.up[1])
+        if(size(d.lb)[1]>0)
+            if(j in d.lb)
+                if(j!=d.lb[1])
                     stop = false
-                    i = 2
-                    while(i <= size(d.up)[1] && !stop )
-                        if(d.up[i]!=j)
+                    i = 1
+                    while(i <= size(d.lb)[1] && !stop )
+                        if(d.lb[i]!=j)
                             i+=1
                         else
                             stop = true
                         end
                     end
                     if(stop)
-                        popat!(d.up,i)
+                        popat!(d.lb,i)
                     end
                 else
-                    popat!(d.up,1)
+                    popat!(d.lb,1)
+                end
+            end
+        else
+            if(size(d.up)[1]>0)
+                if(j in d.up)
+                    if(j!=d.up[1])
+                        stop = false
+                        i = 2
+                        while(i <= size(d.up)[1] && !stop )
+                            if(d.up[i]!=j)
+                                i+=1
+                            else
+                                stop = true
+                            end
+                        end
+                        if(stop)
+                            popat!(d.up,i)
+                        end
+                    else
+                        popat!(d.up,1)
+                    end
                 end
             end
         end

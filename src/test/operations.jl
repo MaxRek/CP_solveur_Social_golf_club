@@ -2,7 +2,6 @@ import Dates
 
 using Dates
 
-include("../operation_v.jl")
 include("../dataStructure.jl")
 
 nameLog = Dates.format(now(),"ddmm-HHMM")
