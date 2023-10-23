@@ -321,7 +321,7 @@ function compare_domain(d1 :: Domain, d2 :: Domain)
 end
 
 function addUp(d :: Domain, v :: Vector{Int64})
-    for j in v
+    for j in vp
         if(!(j in d.up)&&!(j in d.lb))
             if(size(d.up)[1]!=0)
                 if(j>d.up[1])
@@ -392,50 +392,60 @@ function move_up_to_lb(d :: Domain, v :: Vector{Int64})
     end
 end
 
-function del(d :: Domain, v :: Vector{Int64})
-    for j in v
-        if(size(d.lb)[1]>0)
-            if(j in d.lb)
-                if(j!=d.lb[1])
+function del(io,d :: Domain, v :: Vector{Int64})
+    println(io,"\n  Into del, d = ",d,", v = ",v)
+    vp = copy(v)
+
+    for j in vp
+        println(io,"     Loop for j, or not , j = ",j,", d = ",d)
+        if(j in d.lb)
+            println(io,"        j in d.lb, j = ",j,", d.lb = ",d.lb)
+            if(j!=d.lb[1])
+                stop = false
+                i = 1
+                while(i <= size(d.lb)[1] && !stop )
+                    if(d.lb[i]!=j)
+                        i+=1
+                    else
+                        println(io,"          j was found in d.lb")
+
+                        stop = true
+                    end
+                end
+                if(stop)
+                    popat!(d.lb,i)
+                end
+            else
+                popat!(d.lb,1)
+            end
+        end
+        if(size(d.up)[1]>0)
+            if(j in d.up)
+                println(io,"        j in d.up, j = ",j,", d.up = ",d.up)
+                if(j!=d.up[1])
                     stop = false
-                    i = 1
-                    while(i <= size(d.lb)[1] && !stop )
-                        if(d.lb[i]!=j)
+                    i = 2
+                    while(i <= size(d.up)[1] && !stop )
+                        if(d.up[i]!=j)
                             i+=1
                         else
                             stop = true
+                            println(io,"          j was found in d.up")
                         end
                     end
                     if(stop)
-                        popat!(d.lb,i)
+                        popat!(d.up,i)
                     end
                 else
-                    popat!(d.lb,1)
+                    popat!(d.up,1)
                 end
             end
         else
-            if(size(d.up)[1]>0)
-                if(j in d.up)
-                    if(j!=d.up[1])
-                        stop = false
-                        i = 2
-                        while(i <= size(d.up)[1] && !stop )
-                            if(d.up[i]!=j)
-                                i+=1
-                            else
-                                stop = true
-                            end
-                        end
-                        if(stop)
-                            popat!(d.up,i)
-                        end
-                    else
-                        popat!(d.up,1)
-                    end
-                end
-            end
+            println(io,"\n        j isn't in d.lb or d.up, j = ",j,", d.lb = ",d.lb,", d.up = ",d.up)
         end
+        println(io,"     END Loop")
     end
+    println(io,"  After del, vp = ",vp,", d = ",d)
 end
 
 

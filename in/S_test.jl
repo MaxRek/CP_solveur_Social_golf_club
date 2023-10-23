@@ -18,24 +18,24 @@ end
 function split_add_up_in_lb(io, d :: Domain)
     dr = Domain(Vector{Int64}(),Vector{Int64}(),0,0)
     dr.lb = copy(d.lb) ; dr.up = copy(d.up) ; dr.minC = d.minC ; dr.maxC = d.maxC
-    println(io,"before dr = ",dr)
+    println(io,"\n  before dr = ",dr)
     e_added = dr.up[Int64(round(rand()*(size(dr.up)[1]-1))+1)]
-    println(io,"e_added = ",e_added)
-    del(dr,[e_added])
-    println(io,"after del, dr = ",dr)
+    println(io,"  e_added = ",e_added)
+    del(io,dr,[e_added])
+    println(io,"  after del, dr = ",dr)
 
     addLb(dr, [e_added])
-    println(io,"after add dr = ",dr)
-    if(d.minC == d.maxC)
-        if(size(d.lb)[1]== d.minC)
-            print("d = ", d,"d.up = ",d.up)
-            for k in d.up
-                println("k = ",k)
-                del(d, [k])
-            end
+    println(io,"  after add dr = ",dr,"\n")
+    if(dr.minC == dr.maxC)
+        println(io,"    d.minC == d.maxC, d.lb = ",d.lb)
+        if(size(dr.lb)[1]== dr.minC)
+            println(io,"    size(d.lb) == dr.minC, dr = ", dr,", dr.up = ",dr.up)
+            del(io,dr, dr.up)
         end
     else
-        println(io, "ERREUR : minC > maxC, d = ", d)
+        if(dr.minC > dr.maxC)
+            println(io, "ERREUR : minC > maxC, dr = ", dr)
+        end
     end
 
     return dr
