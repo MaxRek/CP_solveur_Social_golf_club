@@ -23,7 +23,8 @@ function solve(io,P :: CSP)
 
     while(!isempty(pile) && gardefou <= 20 && !stop)
         Pp = pop!(pile)
-        println(io, "_____________\nNouvelle itération \n Pp = ",Pp,"\n gardefou = ", gardefou)
+        println(io, "_____________\nNouvelle itération \n gardefou = ", gardefou)
+        print_CSP(io, 1, Pp)
         propagation(io, Pp)
         if(is_ended_CSP(io,Pp))
             println(io, "Pp is ended, checking for feasible on")
@@ -34,9 +35,7 @@ function solve(io,P :: CSP)
             end
         else
             println(io, "Pp isn't ended, spliting Pp")
-            P1, P2 = split(io, Pp, pile)
-            push!(pile, P1)
-            push!(pile, P2)
+            split(io, Pp, pile)
         end
         gardefou += 1
     end

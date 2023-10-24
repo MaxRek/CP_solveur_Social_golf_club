@@ -104,6 +104,10 @@ function intersect_domain(d1 :: Domain, d2 :: Domain)
 end
 
 function subDomain(d1 :: Domain, d2 :: Domain)
+    return true
+end
+
+function old_subDomain(d1 :: Domain, d2 :: Domain)
     #Is d1 subDomain of d2 ?
     dr = false
     #verify cardinalities
@@ -203,86 +207,7 @@ function difference_domain(d1 :: Domain, d2 :: Domain)
     return dr
 end
 
-function old_difference_domain(d1 :: Domain, d2 :: Domain)
-    dr = Domain(Vector{Int64}(),Vector{Int64}(),0,0)
-    #cardinalité de F = max peut changer selon le nombre d'éléments dans up
-    #min va changer si le nb d'leme dans lb
-    #println("d1 = ",d1,"\nd2 = ",d2)
-    #lb
-    dr.lb = copy(d1.lb)
-    e = Vector{Int64}()
 
-    for i in d2.lb
-        j = 1
-        stop = false
-        while(j<=size(dr.lb)[1] && !stop)    
-            if(dr.lb[j]!=i)
-                j += 1
-            else
-                stop = true
-            end
-        end
-        if stop
-            popat!(dr.lb,j)
-        else
-            append!(e,i)
-        end
-
-    end
-
-    println("----lb----\nd1 = ",d1,"\nd2 = ",d2,"\ndr = ",dr,"\ne = ",e, ", size(e)[1] = ",size(e)[1])
-    if(size(e)[1] != 0)
-        addLb(dr,e)
-    end
-
-    #up
-    dr.up = copy(d1.up)
-    e = Vector{Int64}()
-
-    for i in d2.up
-        j = 1
-        stop = false
-        while(j<=size(dr.up)[1] && !stop)    
-            if(dr.up[j]!=i)
-                j += 1
-            else
-                stop = true
-            end
-        end
-        if stop
-            popat!(dr.up,j)
-        else
-            append!(e,i)
-        end
-    end
-
-    for i in dr.up
-        j = 1
-        stop = false
-        while(j<=size(dr.up)[1] && !stop)    
-            if(dr.up[j]!=i)
-                j += 1
-            else
-                stop = true
-            end
-        end
-        if stop
-            popat!(dr.up,j)
-        end
-    end
-
-    println("----up----\nd1 = ",d1,"\nd2 = ",d2,"\ndr = ",dr,"\ne = ",e, ", size(e)[1] = ",size(e)[1])
-
-
-    if(size(e)[1] != 0)
-        addUp(dr,e)
-    end
-
-    #cardinalities
-    difference_cardinalities(d1,d2,dr)
-
-    return dr
-end
 
 function compare_domain(d1 :: Domain, d2 :: Domain)
     #is d1 == to d2 ?
@@ -321,7 +246,7 @@ function compare_domain(d1 :: Domain, d2 :: Domain)
 end
 
 function addUp(d :: Domain, v :: Vector{Int64})
-    for j in vp
+    for j in v
         if(!(j in d.up)&&!(j in d.lb))
             if(size(d.up)[1]!=0)
                 if(j>d.up[1])
@@ -392,14 +317,14 @@ function move_up_to_lb(d :: Domain, v :: Vector{Int64})
     end
 end
 
-function del(io,d :: Domain, v :: Vector{Int64})
-    println(io,"\n  Into del, d = ",d,", v = ",v)
+function del(d :: Domain, v :: Vector{Int64})
+    #println("\n  Into del, d = ",d,", v = ",v)
     vp = copy(v)
 
     for j in vp
-        println(io,"     Loop for j, or not , j = ",j,", d = ",d)
+        #println("     Loop for j, or not , j = ",j,", d = ",d)
         if(j in d.lb)
-            println(io,"        j in d.lb, j = ",j,", d.lb = ",d.lb)
+            #println("        j in d.lb, j = ",j,", d.lb = ",d.lb)
             if(j!=d.lb[1])
                 stop = false
                 i = 1
@@ -407,7 +332,7 @@ function del(io,d :: Domain, v :: Vector{Int64})
                     if(d.lb[i]!=j)
                         i+=1
                     else
-                        println(io,"          j was found in d.lb")
+                        #println("          j was found in d.lb")
 
                         stop = true
                     end
@@ -421,7 +346,7 @@ function del(io,d :: Domain, v :: Vector{Int64})
         end
         if(size(d.up)[1]>0)
             if(j in d.up)
-                println(io,"        j in d.up, j = ",j,", d.up = ",d.up)
+                #println("        j in d.up, j = ",j,", d.up = ",d.up)
                 if(j!=d.up[1])
                     stop = false
                     i = 2
@@ -430,7 +355,7 @@ function del(io,d :: Domain, v :: Vector{Int64})
                             i+=1
                         else
                             stop = true
-                            println(io,"          j was found in d.up")
+                            #println("          j was found in d.up")
                         end
                     end
                     if(stop)
@@ -441,11 +366,11 @@ function del(io,d :: Domain, v :: Vector{Int64})
                 end
             end
         else
-            println(io,"\n        j isn't in d.lb or d.up, j = ",j,", d.lb = ",d.lb,", d.up = ",d.up)
+            #println("\n        j isn't in d.lb or d.up, j = ",j,", d.lb = ",d.lb,", d.up = ",d.up)
         end
-        println(io,"     END Loop")
+        #println("     END Loop")
     end
-    println(io,"  After del, vp = ",vp,", d = ",d)
+    #println("  After del, vp = ",vp,", d = ",d)
 end
 
 

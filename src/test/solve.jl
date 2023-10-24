@@ -66,7 +66,7 @@ println(io,"D[4] =",s1.D[4])
 println(io, "s1 is ended ? = ",is_ended_CSP(io, s1))
 
 println(io,"ajout de bornes sup a inf pour domaine 5")
-s1.D[4] = split_add_up_in_lb(io, s1.D[5])
+s1.D[5] = split_add_up_in_lb(io, s1.D[5])
 println(io,"D[5]",s1.D[5])
 
 println(io, "s1 is ended ? = ",is_ended_CSP(io, s1))

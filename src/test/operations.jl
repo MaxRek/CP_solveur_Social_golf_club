@@ -119,46 +119,82 @@ if(
         println(io,"----------------------------------\n")
     end
 
-    println(io,"---Test Sous-Domaine---\n d2 sous-domaine")
+    println(io,"---Test Sous-Domaine---\n d2 sous-domaine de d1 ?")
+    println(io,"---------------------------\n")
 
     d1 = Domain([4,5], [6], 2, 3)
     d2 = Domain([4,5], [], 2,2)
 
-
+    print_domain(io, 1, [d1,d2])
 
     if(subDomain(d2,d1))
-
-    d2
-
-    
-
-    d3 = Domain([4], [6], 1, 2)
-    d4 = Domain([10], [3, 4, 5, 6], 3, 3)
-    d5 = Domain([5, 6], [2, 4, 7, 8], 2, 4)
-    d6 = Domain([10], [2, 3, 4, 5, 6, 7, 8], 1, 8)
-
-    if(compare_domain(subDomain(d1,d2),d3))
-        println(io,"Sous-Domaine simple : OK\n")
+        println(io,"Prévu : d2 bien sous_domaine de d1")
     else
-        println(io,"ERREUR : Sous-Domaine Simple")
-        println(io,"----------------------------------")
-        println(io,"d1 = ",d1)
-        println(io,"d2 = ",d2)
-        println(io,"d3 = ",d3)
-        println(io,"dr = ",subDomain(d1,d2))
-        println(io,"----------------------------------\n")
+        println(io,"ERREUR : d2 n'est pas considéré comme sous_domaine de d1")
     end
-    if(compare_domain(subDomain(d4,d5) ,d6))
-        println(io,"Sous-Domaine avec multiples elem + cardinalités spéciales : OK\n")
+    println(io,"---------------------------\n")
+
+
+    d1 = Domain([4,5], [6], 2, 3)
+    d2 = Domain([], [4,5], 0,2)
+
+    print_domain(io, 1, [d1,d2])
+
+    if(subDomain(d2,d1))
+        println(io,"Prévu : d2 bien sous_domaine de d1")
     else
-        println(io,"ERREUR : Sous-Domaine avec multiples elem + cardinalités spéciales")
-        println(io,"----------------------------------")
-        println(io,"d1 = ",d4)
-        println(io,"d2 = ",d5)
-        println(io,"d3 = ",d6)
-        println(io,"dr = ",subDomain(d4,d5))
-        println(io,"----------------------------------\n")
+        println(io,"ERREUR : d2 n'est pas considéré comme sous_domaine de d1")
     end
+    println(io,"---------------------------\n")
+
+    d1 = Domain([4,5], [6], 2, 3)
+    d2 = Domain([4,5], [2], 2,3)
+
+    print_domain(io, 1, [d1,d2])
+
+    if(subDomain(d2,d1))
+        println(io,"Prévu : d2 bien sous_domaine de d1")
+    else
+        println(io,"ERREUR : d2 n'est pas considéré comme sous_domaine de d1")
+    end
+    println(io,"---------------------------\n")
+
+    d1 = Domain([4,5], [6], 2, 3)
+    d2 = Domain([], [2,3,4,5], 0,4)
+
+    print_domain(io, 1, [d1,d2])
+
+    if(subDomain(d2,d1))
+        println(io,"Prévu : d2 bien sous_domaine de d1")
+    else
+        println(io,"ERREUR : d2 n'est pas considéré comme sous_domaine de d1")
+    end
+    println(io,"---------------------------\n")
+
+    d1 = Domain([4,5], [6], 2, 3)
+    d2 = Domain([4], [6], 1,2)
+
+    print_domain(io, 1, [d1,d2])
+
+    if(subDomain(d2,d1))
+        println(io,"Prévu : d2 n'est pas sous_domaine de d1")
+    else
+        println(io,"ERREUR : d2 est considéré comme sous_domaine de d1")
+    end
+    println(io,"---------------------------\n")
+
+    d1 = Domain([4,5,10,11], [6,7,8,9], 4, 6)
+    d2 = Domain([], [2,3,4,5], 3,4)
+
+    print_domain(io, 1, [d1,d2])
+
+    if(subDomain(d2,d1))
+        println(io,"Prévu : d2 n'est pas sous_domaine de d1")
+    else
+        println(io,"ERREUR : d2 est considéré comme sous_domaine de d1")
+    end
+    println(io,"---------------------------\n")
+
 else
     println(io,"ERREUR : Compare_domain")
     println(io, "compare_domain(d1,d2) = ",compare_domain(d1,d2))
