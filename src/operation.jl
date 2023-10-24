@@ -104,6 +104,10 @@ function intersect_domain(d1 :: Domain, d2 :: Domain)
 end
 
 function subDomain(d1 :: Domain, d2 :: Domain)
+    return true
+end
+
+function old_subDomain(d1 :: Domain, d2 :: Domain)
     #Is d1 subDomain of d2 ?
     dr = false
     #verify cardinalities
@@ -203,86 +207,7 @@ function difference_domain(d1 :: Domain, d2 :: Domain)
     return dr
 end
 
-function old_difference_domain(d1 :: Domain, d2 :: Domain)
-    dr = Domain(Vector{Int64}(),Vector{Int64}(),0,0)
-    #cardinalité de F = max peut changer selon le nombre d'éléments dans up
-    #min va changer si le nb d'leme dans lb
-    #println("d1 = ",d1,"\nd2 = ",d2)
-    #lb
-    dr.lb = copy(d1.lb)
-    e = Vector{Int64}()
 
-    for i in d2.lb
-        j = 1
-        stop = false
-        while(j<=size(dr.lb)[1] && !stop)    
-            if(dr.lb[j]!=i)
-                j += 1
-            else
-                stop = true
-            end
-        end
-        if stop
-            popat!(dr.lb,j)
-        else
-            append!(e,i)
-        end
-
-    end
-
-    println("----lb----\nd1 = ",d1,"\nd2 = ",d2,"\ndr = ",dr,"\ne = ",e, ", size(e)[1] = ",size(e)[1])
-    if(size(e)[1] != 0)
-        addLb(dr,e)
-    end
-
-    #up
-    dr.up = copy(d1.up)
-    e = Vector{Int64}()
-
-    for i in d2.up
-        j = 1
-        stop = false
-        while(j<=size(dr.up)[1] && !stop)    
-            if(dr.up[j]!=i)
-                j += 1
-            else
-                stop = true
-            end
-        end
-        if stop
-            popat!(dr.up,j)
-        else
-            append!(e,i)
-        end
-    end
-
-    for i in dr.up
-        j = 1
-        stop = false
-        while(j<=size(dr.up)[1] && !stop)    
-            if(dr.up[j]!=i)
-                j += 1
-            else
-                stop = true
-            end
-        end
-        if stop
-            popat!(dr.up,j)
-        end
-    end
-
-    println("----up----\nd1 = ",d1,"\nd2 = ",d2,"\ndr = ",dr,"\ne = ",e, ", size(e)[1] = ",size(e)[1])
-
-
-    if(size(e)[1] != 0)
-        addUp(dr,e)
-    end
-
-    #cardinalities
-    difference_cardinalities(d1,d2,dr)
-
-    return dr
-end
 
 function compare_domain(d1 :: Domain, d2 :: Domain)
     #is d1 == to d2 ?
@@ -352,57 +277,100 @@ end
 function addLb(d :: Domain, v :: Vector{Int64})
     for j in v
         if(!(j in d.lb))
-            if(size(d.lb)[1]!=0)
-                #println("j =  ",j,", d.lb = ",d.lb[1]," ")
-                if(j>d.lb[1])
-                    stop = false
-                    i = 1
-                    while(i < size(d.lb)[1] && !stop )
-                        if(d.lb[i+1]<j)
-                            i+=1
-                        else
-                            stop = true
+            if(size(d.lb)[1]>=d.maxC)
+                println("ERREUR : size(d.lb)[1]>=d.maxC, size(d.lb)[1] = ",size(d.lb)[1],", d.maxC = ",d.maxC)
+            else
+                if(size(d.lb)[1]!=0)
+                    if(j>d.lb[1])
+                        stop = false
+                        i = 1
+                        while(i < size(d.lb)[1] && !stop )
+                            if(d.lb[i+1]<j)
+                                i+=1
+                            else
+                                stop = true
+                            end
                         end
-                    end
-                    if(!stop)
-                        append!(d.lb,j)
+                        if(!stop)
+                            append!(d.lb,j)
+                        else
+                            insert!(d.lb,i+1,j)
+                        end
                     else
-                        insert!(d.lb,i+1,j)
+                        insert!(d.lb,1,j)
                     end
                 else
-                    insert!(d.lb,1,j)
+                    append!(d.lb,j)
                 end
-            else
-                append!(d.lb,j)
             end
         end
     end
 end
 
-function del(d :: Domain, v :: Vector{Int64})
+function move_up_to_lb(d :: Domain, v :: Vector{Int64})
     for j in v
+        if j in d.up
+            addLb(d,j)
+
+
+        end
+    end
+end
+
+function del(d :: Domain, v :: Vector{Int64})
+    #println("\n  Into del, d = ",d,", v = ",v)
+    vp = copy(v)
+
+    for j in vp
+        #println("     Loop for j, or not , j = ",j,", d = ",d)
         if(j in d.lb)
-            if(j>d.up[1])
+            #println("        j in d.lb, j = ",j,", d.lb = ",d.lb)
+            if(j!=d.lb[1])
                 stop = false
                 i = 1
-                while(i < size(d.up)[1] && !stop )
-                    if(d.up[i+1]<j)
+                while(i <= size(d.lb)[1] && !stop )
+                    if(d.lb[i]!=j)
                         i+=1
                     else
+                        #println("          j was found in d.lb")
+
                         stop = true
                     end
                 end
                 if(stop)
-                    popat!(d.up,j)
+                    popat!(d.lb,i)
                 end
             else
-                insert!(d.up,1,j)
-            end
-        else
-            if(j in d.up)
+                popat!(d.lb,1)
             end
         end
+        if(size(d.up)[1]>0)
+            if(j in d.up)
+                #println("        j in d.up, j = ",j,", d.up = ",d.up)
+                if(j!=d.up[1])
+                    stop = false
+                    i = 2
+                    while(i <= size(d.up)[1] && !stop )
+                        if(d.up[i]!=j)
+                            i+=1
+                        else
+                            stop = true
+                            #println("          j was found in d.up")
+                        end
+                    end
+                    if(stop)
+                        popat!(d.up,i)
+                    end
+                else
+                    popat!(d.up,1)
+                end
+            end
+        else
+            #println("\n        j isn't in d.lb or d.up, j = ",j,", d.lb = ",d.lb,", d.up = ",d.up)
+        end
+        #println("     END Loop")
     end
+    #println("  After del, vp = ",vp,", d = ",d)
 end
 
 

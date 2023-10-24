@@ -13,6 +13,6 @@ end
 
 mutable struct CSP
     X :: Vector{Int64}
-    D :: Tuple{Domain}
+    D :: Vector{Domain}
     C :: Vector{Constraint}
 end

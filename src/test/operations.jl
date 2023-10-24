@@ -2,7 +2,6 @@ import Dates
 
 using Dates
 
-include("../operation_v.jl")
 include("../dataStructure.jl")
 
 nameLog = Dates.format(now(),"ddmm-HHMM")
@@ -119,6 +118,83 @@ if(
         println(io,"dr = ",difference_domain(d4,d5))
         println(io,"----------------------------------\n")
     end
+
+    println(io,"---Test Sous-Domaine---\n d2 sous-domaine de d1 ?")
+    println(io,"---------------------------\n")
+
+    d1 = Domain([4,5], [6], 2, 3)
+    d2 = Domain([4,5], [], 2,2)
+
+    print_domain(io, 1, [d1,d2])
+
+    if(subDomain(d2,d1))
+        println(io,"Prévu : d2 bien sous_domaine de d1")
+    else
+        println(io,"ERREUR : d2 n'est pas considéré comme sous_domaine de d1")
+    end
+    println(io,"---------------------------\n")
+
+
+    d1 = Domain([4,5], [6], 2, 3)
+    d2 = Domain([], [4,5], 0,2)
+
+    print_domain(io, 1, [d1,d2])
+
+    if(subDomain(d2,d1))
+        println(io,"Prévu : d2 bien sous_domaine de d1")
+    else
+        println(io,"ERREUR : d2 n'est pas considéré comme sous_domaine de d1")
+    end
+    println(io,"---------------------------\n")
+
+    d1 = Domain([4,5], [6], 2, 3)
+    d2 = Domain([4,5], [2], 2,3)
+
+    print_domain(io, 1, [d1,d2])
+
+    if(subDomain(d2,d1))
+        println(io,"Prévu : d2 bien sous_domaine de d1")
+    else
+        println(io,"ERREUR : d2 n'est pas considéré comme sous_domaine de d1")
+    end
+    println(io,"---------------------------\n")
+
+    d1 = Domain([4,5], [6], 2, 3)
+    d2 = Domain([], [2,3,4,5], 0,4)
+
+    print_domain(io, 1, [d1,d2])
+
+    if(subDomain(d2,d1))
+        println(io,"Prévu : d2 bien sous_domaine de d1")
+    else
+        println(io,"ERREUR : d2 n'est pas considéré comme sous_domaine de d1")
+    end
+    println(io,"---------------------------\n")
+
+    d1 = Domain([4,5], [6], 2, 3)
+    d2 = Domain([4], [6], 1,2)
+
+    print_domain(io, 1, [d1,d2])
+
+    if(subDomain(d2,d1))
+        println(io,"Prévu : d2 n'est pas sous_domaine de d1")
+    else
+        println(io,"ERREUR : d2 est considéré comme sous_domaine de d1")
+    end
+    println(io,"---------------------------\n")
+
+    d1 = Domain([4,5,10,11], [6,7,8,9], 4, 6)
+    d2 = Domain([], [2,3,4,5], 3,4)
+
+    print_domain(io, 1, [d1,d2])
+
+    if(subDomain(d2,d1))
+        println(io,"Prévu : d2 n'est pas sous_domaine de d1")
+    else
+        println(io,"ERREUR : d2 est considéré comme sous_domaine de d1")
+    end
+    println(io,"---------------------------\n")
+
 else
     println(io,"ERREUR : Compare_domain")
     println(io, "compare_domain(d1,d2) = ",compare_domain(d1,d2))
