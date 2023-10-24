@@ -3,6 +3,8 @@ import Dates
 using Dates
 
 include("../dataStructure.jl")
+include("../operation.jl")
+include("../domain.jl")
 
 nameLog = Dates.format(now(),"ddmm-HHMM")
 io = open(String("out/log_test_"*nameLog*".txt"), "w")
@@ -134,7 +136,6 @@ if(
     end
     println(io,"---------------------------\n")
 
-
     d1 = Domain([4,5], [6], 2, 3)
     d2 = Domain([], [4,5], 0,2)
 
@@ -176,7 +177,7 @@ if(
 
     print_domain(io, 1, [d1,d2])
 
-    if(subDomain(d2,d1))
+    if(!subDomain(d2,d1))
         println(io,"Prévu : d2 n'est pas sous_domaine de d1")
     else
         println(io,"ERREUR : d2 est considéré comme sous_domaine de d1")
@@ -188,7 +189,7 @@ if(
 
     print_domain(io, 1, [d1,d2])
 
-    if(subDomain(d2,d1))
+    if(!subDomain(d2,d1))
         println(io,"Prévu : d2 n'est pas sous_domaine de d1")
     else
         println(io,"ERREUR : d2 est considéré comme sous_domaine de d1")
