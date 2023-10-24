@@ -1,4 +1,4 @@
-function split(io, P :: CSP, pile :: Stack{CSP})
+function split_domain(io, P :: CSP, pile :: Stack{CSP})
     #println(io,"Je split")
     i = 1
     d_not_finished = Vector{Int64}()
