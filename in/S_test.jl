@@ -39,8 +39,8 @@ function split(io, P :: CSP, pile :: Stack{CSP})
         if(size(d_not_finished)[1] == 1)
             d_modify1 = d_not_finished[Int(round(rand()*((size(d_not_finished)[1]-1)))) + 1]
             P1 = deepcopy(P)
-            P1.D[d_modify1] =split_add_up_in_lb(io, P1.D[d_modify1])
-            println("Domaines de P1 :")
+            P1.D[d_modify1] = split_add_up_in_lb(io, P1.D[d_modify1])
+            println(io,"Domaines de P1 :")
             print_domain(io,1,P1.D)
             
             push!(pile,P1)

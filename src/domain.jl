@@ -4,6 +4,35 @@ mutable struct Domain
     minC :: Int64
     maxC :: Int64
 end
+    
+function addLb(d :: Domain, v :: Vector{Int64})
+    for j in v
+        if(!(j in d.lb))
+            if(size(d.lb)[1]!=0)
+                if(j>d.lb[1])
+                    stop = false
+                    i = 1
+                    while(i < size(d.lb)[1] && !stop )
+                        if(d.lb[i+1]<j)
+                            i+=1
+                        else
+                            stop = true
+                        end
+                    end
+                    if(!stop)
+                        append!(d.lb,j)
+                    else
+                        insert!(d.lb,i+1,j)
+                    end
+                else
+                    insert!(d.lb,1,j)
+                end
+            else
+                append!(d.lb,j)
+            end
+        end
+    end
+end
 
 function addUp(d :: Domain, v :: Vector{Int64})
     for j in v
@@ -30,49 +59,6 @@ function addUp(d :: Domain, v :: Vector{Int64})
             else
                 append!(d.up,j)
             end
-        end
-    end
-end
-    
-function addLb(d :: Domain, v :: Vector{Int64})
-    for j in v
-        if(!(j in d.lb))
-            if(size(d.lb)[1]>=d.maxC)
-                println("ERREUR : size(d.lb)[1]>=d.maxC, size(d.lb)[1] = ",size(d.lb)[1],", d.maxC = ",d.maxC)
-            else
-                if(size(d.lb)[1]!=0)
-                    if(j>d.lb[1])
-                        stop = false
-                        i = 1
-                        while(i < size(d.lb)[1] && !stop )
-                            if(d.lb[i+1]<j)
-                                i+=1
-                            else
-                                stop = true
-                            end
-                        end
-                        if(!stop)
-                            append!(d.lb,j)
-                        else
-                            insert!(d.lb,i+1,j)
-                        end
-                    else
-                        insert!(d.lb,1,j)
-                    end
-                else
-                    append!(d.lb,j)
-                end
-            end
-        end
-    end
-end
-
-function move_up_to_lb(d :: Domain, v :: Vector{Int64})
-    for j in v
-        if j in d.up
-            addLb(d,j)
-
-
         end
     end
 end
