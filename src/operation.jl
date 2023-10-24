@@ -103,7 +103,65 @@ function intersect_domain(d1 :: Domain, d2 :: Domain)
     return dr
 end
 
-function subDomain(d1 :: Domain, d2 :: Domain)
+function subDomain(io, v :: Int64, d1 :: Domain, d2 :: Domain)
+    bool = false
+    #d1 sous domaine de d2 ?
+    #filtrage de d1 pour n'avoir que les éléments de d2
+    d1f = subDomain_filtrage(io, d1,d2)
+    dr = intersect_domain(d1f,d2)
+    
+    # if(v == 1)
+    #     print_domain(io, 1, [d1,d2,dr])
+    #     println(io, "d1f = ", d1f)
+    # else
+    #     print_domain(0, 0, [d1,d2,dr])
+    #     println("d1f = ", d1f)
+    # end
+
+    if (compare_domain(dr,d1f))
+        if(size(elem_array(d1f.lb,d1f.up))[1]<d1.minC)
+            #println(io,"Pas assez d'éléments dans l'intersection de d1 et d2 pour respecter le domaine de base")
+        else
+            bool = true
+        end
+    end
+    
+    return bool
+end
+
+function subDomain_filtrage(io, d1 :: Domain, d2 :: Domain)
+    dr = deepcopy(d1)
+    e = elem_array(d2.lb,d2.up)
+
+    for i in d1.up
+        if(!(i in e))
+            del(dr,[i])
+        end
+    end
+
+    for i in d2.lb
+        if(i in dr.up)
+            del(dr,[i])
+            addLb(dr,[i])
+        end
+    end
+
+    dr.minC = size(dr.lb)[1]
+
+    e = size(elem_array(dr.lb,dr.up))[1]
+    #println("e = ",e,", dr.maxC = ",dr.maxC,"\n________________")
+    if(e<dr.maxC)
+        dr.maxC = e
+        if(dr.maxC<dr.minC)
+            dr.minC = dr.maxC
+        end
+    end
+
+    return dr
+
+end
+
+function old_subDomain(d1 :: Domain, d2 :: Domain)
     #Is d1 subDomain of d2 ?
     dr = false
     #verify cardinalities
@@ -203,86 +261,7 @@ function difference_domain(d1 :: Domain, d2 :: Domain)
     return dr
 end
 
-function old_difference_domain(d1 :: Domain, d2 :: Domain)
-    dr = Domain(Vector{Int64}(),Vector{Int64}(),0,0)
-    #cardinalité de F = max peut changer selon le nombre d'éléments dans up
-    #min va changer si le nb d'leme dans lb
-    #println("d1 = ",d1,"\nd2 = ",d2)
-    #lb
-    dr.lb = copy(d1.lb)
-    e = Vector{Int64}()
 
-    for i in d2.lb
-        j = 1
-        stop = false
-        while(j<=size(dr.lb)[1] && !stop)    
-            if(dr.lb[j]!=i)
-                j += 1
-            else
-                stop = true
-            end
-        end
-        if stop
-            popat!(dr.lb,j)
-        else
-            append!(e,i)
-        end
-
-    end
-
-    println("----lb----\nd1 = ",d1,"\nd2 = ",d2,"\ndr = ",dr,"\ne = ",e, ", size(e)[1] = ",size(e)[1])
-    if(size(e)[1] != 0)
-        addLb(dr,e)
-    end
-
-    #up
-    dr.up = copy(d1.up)
-    e = Vector{Int64}()
-
-    for i in d2.up
-        j = 1
-        stop = false
-        while(j<=size(dr.up)[1] && !stop)    
-            if(dr.up[j]!=i)
-                j += 1
-            else
-                stop = true
-            end
-        end
-        if stop
-            popat!(dr.up,j)
-        else
-            append!(e,i)
-        end
-    end
-
-    for i in dr.up
-        j = 1
-        stop = false
-        while(j<=size(dr.up)[1] && !stop)    
-            if(dr.up[j]!=i)
-                j += 1
-            else
-                stop = true
-            end
-        end
-        if stop
-            popat!(dr.up,j)
-        end
-    end
-
-    println("----up----\nd1 = ",d1,"\nd2 = ",d2,"\ndr = ",dr,"\ne = ",e, ", size(e)[1] = ",size(e)[1])
-
-
-    if(size(e)[1] != 0)
-        addUp(dr,e)
-    end
-
-    #cardinalities
-    difference_cardinalities(d1,d2,dr)
-
-    return dr
-end
 
 function compare_domain(d1 :: Domain, d2 :: Domain)
     #is d1 == to d2 ?
@@ -319,92 +298,6 @@ function compare_domain(d1 :: Domain, d2 :: Domain)
 
     return dr
 end
-
-function addUp(d :: Domain, v :: Vector{Int64})
-    for j in v
-        if(!(j in d.up)&&!(j in d.lb))
-            if(size(d.up)[1]!=0)
-                if(j>d.up[1])
-                    stop = false
-                    i = 1
-                    while(i < size(d.up)[1] && !stop )
-                        if(d.up[i+1]<j)
-                            i+=1
-                        else
-                            stop = true
-                        end
-                    end
-                    if(!stop)
-                        append!(d.up,j)
-                    else
-                        insert!(d.up,i+1,j)
-                    end
-                else
-                    insert!(d.up,1,j)
-                end
-            else
-                append!(d.up,j)
-            end
-        end
-    end
-end
-    
-function addLb(d :: Domain, v :: Vector{Int64})
-    for j in v
-        if(!(j in d.lb))
-            if(size(d.lb)[1]!=0)
-                #println("j =  ",j,", d.lb = ",d.lb[1]," ")
-                if(j>d.lb[1])
-                    stop = false
-                    i = 1
-                    while(i < size(d.lb)[1] && !stop )
-                        if(d.lb[i+1]<j)
-                            i+=1
-                        else
-                            stop = true
-                        end
-                    end
-                    if(!stop)
-                        append!(d.lb,j)
-                    else
-                        insert!(d.lb,i+1,j)
-                    end
-                else
-                    insert!(d.lb,1,j)
-                end
-            else
-                append!(d.lb,j)
-            end
-        end
-    end
-end
-
-function del(d :: Domain, v :: Vector{Int64})
-    for j in v
-        if(j in d.lb)
-            if(j>d.up[1])
-                stop = false
-                i = 1
-                while(i < size(d.up)[1] && !stop )
-                    if(d.up[i+1]<j)
-                        i+=1
-                    else
-                        stop = true
-                    end
-                end
-                if(stop)
-                    popat!(d.up,j)
-                end
-            else
-                insert!(d.up,1,j)
-            end
-        else
-            if(j in d.up)
-            end
-        end
-    end
-end
-
 
 function elem_array(a :: Vector{Int64},b :: Vector{Int64})
     c = copy(a)
