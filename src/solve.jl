@@ -81,24 +81,6 @@ function print_CSP(io, v, P :: CSP)
     end
 end
 
-function print_domain(io, v, D :: Vector{Domain})
-    if(v == 0)
-        i = 1
-        while(i<=size(D)[1])
-            println("X",i,", lb = ",D[i].lb,", up = ",D[i].up,", minC = ",D[i].minC,", maxC = ",D[i].maxC)
-            i += 1
-        end
-    else
-        if(v == 1)
-            i = 1
-            while(i<=size(D)[1])
-                println(io,"X",i,", lb = ",D[i].lb,", up = ",D[i].up,", minC = ",D[i].minC,", maxC = ",D[i].maxC)
-                i += 1
-            end
-        end
-    end
-end
-
 function print_constraint(io, v, C :: Vector{Constraint})
     if(v == 0)
         i = 1

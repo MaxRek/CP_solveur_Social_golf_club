@@ -5,12 +5,13 @@ import Dates
 using Dates
 using DataStructures
 
-
+include("src/domain.jl")
 include("in/G_test.jl")
 include("in/S_test.jl")
 include("src/dataStructure.jl")
 include("src/solve.jl")
 include("src/operation.jl")
+
 
 S = CSP(
         Vector{Int64}([1,2,3,4,5]),

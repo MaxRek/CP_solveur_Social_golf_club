@@ -9,8 +9,6 @@
 #               #functions whose at least one variable has been modified must be woken
 include("../src/dataStructure.jl")
 
-
-
 function propagation(io, P :: CSP)
     Pp = deepcopy(P)
     println(io,"__________\n ça propage sec \n__________")
