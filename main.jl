@@ -15,34 +15,6 @@ include("src/operation.jl")
 include("src/writer/writer.jl")
 include("src/parser/parser.jl")
 
-
-function CP()
-
-    nameLog = Dates.format(now(),"ddmm-HHMM")
-
-    io = open(String("out/log_"*nameLog*".txt"), "w")
-    
-    S = CSP(
-        Vector{Int64}([1,2,3,4,5]),
-        Vector{Domain}([
-            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1),
-            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1),
-            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1),
-            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1),
-            Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1)
-        ])
-        ,Vector{Constraint}()
-    )
-    push!(S.C,Constraint(S.D,"union",Domain(collect(1:5),Vector{Int64}(),5,5)))
-    push!(S.C,Constraint(S.D,"intersect",Domain(Vector{Int64}(),collect(1:5),0,0)))
-
-
-    solve(io, S)
-
-    close(io)
-
-end
-
 function parse_CSP(pathtoholder)
     CSPs = Vector{CSP}()
     fnames = getfname(pathtoholder)
@@ -50,7 +22,40 @@ function parse_CSP(pathtoholder)
     for f in fnames
         push!(CSPs,loadCP(String(pathtoholder*"/"*f)))
     end
-    return CSPs
+    return fnames, CSPs
 end
 
-CP()
+function main()
+    #Log & modeles
+    if(!isdir("out"))
+        mkdir("out")
+    end
+    if(!isdir("in/modeles"))
+        mkdir("in/modeles")
+        generateModelsTests(4,4,4)
+    end
+    if(length(readdir("in/modeles")) == 0)
+        generateModelsTests(4,4,4)
+    end
+
+    nameLog = Dates.format(now(),"ddmm-HHMM")
+    log = open(String("out/log_"*nameLog*".txt"), "w")
+    result = open(String("out/result_"*nameLog*".txt"), "w")
+    path = ("in/modeles/")
+
+    fnames, CSPs = parse_CSP(path)
+    
+    time = zeros(1,length(fnames))
+    
+    solve(log,CSPs[10])
+
+    # for i in 1:length(fnames)
+    #     time[i] = @elapsed solve(log,CSPs[i])
+    # end
+
+    println(result,time)
+
+    close(result)
+    close(log)
+end
+main()

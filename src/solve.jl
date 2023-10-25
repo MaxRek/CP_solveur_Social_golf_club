@@ -40,7 +40,7 @@ function solve(io,P :: CSP)
             println(io, "---Pp is ended, checking for feasible on---")
             if(feasible_CSP(io,Pp))
                 stop = true
-                (println(io, "---Pp is valid, end of solving---\n"))
+                println(io, "---Pp is valid, end of solving---\n")
             else
                 println(io, "---Pp isn't valid, moving on---\n")
             end
@@ -57,32 +57,22 @@ function solve(io,P :: CSP)
 
 end
 
-function propagate(io, P :: CSP)
-    changed = true
-    while changed
-      changed = false
-      for c in P.C
-        changed = changed || filtrate(io, c)
-      end
-    end
-  end
-
-  function feasible_CSP(io, P :: CSP)
+function feasible_CSP(io, P :: CSP)
     isItFeasible = true
     for i in 1:length(P.C)
-      isItFeasible = isItFeasible && check_feasibility(io, i, P.C[i].domains, P.C[i])
+        isItFeasible = isItFeasible && check_feasibility(io, i, P.D[P.C[i].domains], P.C[i])
     end
-      
+        
     return isItFeasible
-  end
-  
-  function is_ended_CSP(io, Pp :: CSP)
-      isItOver = feasible_CSP(io, Pp :: CSP)
-      for i in Pp.D
+end
+
+function is_ended_CSP(io, Pp :: CSP)
+    isItOver = feasible_CSP(io, Pp :: CSP)
+    for i in Pp.D
         isItOver = isItOver && i.up == [] #un domaine stable n'a plus d'éléments possibles à l'ajout, si fini tt domaine est stable
-      end
-      return isItOver
-  end
+    end
+    return isItOver
+end
 
 function print_CSP(io, v, P :: CSP)
     if(v == 0)
@@ -90,7 +80,7 @@ function print_CSP(io, v, P :: CSP)
         println("   -Domains :")
         print_domain(io, v, P.D)
         println("   -Constraint :")
-        print_constraint(io, v, P.C)
+        print_constraint(io, v,P.C)
     else
         if(v == 1)
             println(io,"CSP :")

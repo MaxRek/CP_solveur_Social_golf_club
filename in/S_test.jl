@@ -3,7 +3,7 @@ function split_domain(io, P :: CSP, pile :: Stack{CSP})
     i = 1
     d_not_finished = Vector{Int64}()
     for d in P.D
-        if(d.minC != size(d.lb)[1] && d.maxC != size(d.lb)[1])
+        if(d.minC == size(d.lb)[1] || d.maxC == size(d.lb)[1])
             append!(d_not_finished, i) 
         end
         i += 1
@@ -73,7 +73,14 @@ function split_add_up_in_lb(io, d :: Domain)
     else
         if(dr.minC > dr.maxC)
             #println(io, "ERREUR : minC > maxC, dr = ", dr)
+        else
+            dr.minC += 1
         end
+    end
+
+    if(dr.minC == dr.maxC && dr.minC == size(dr.lb)[1]==dr.minC)
+        e = copy(dr.up)
+        del(dr, e)
     end
 
     return dr
