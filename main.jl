@@ -34,7 +34,7 @@ function CP()
         ,Vector{Constraint}()
     )
     push!(S.C,Constraint(S.D,"union",Domain(collect(1:5),Vector{Int64}(),5,5)))
-    push!(S.C,Constraint(S.D,"intersect",Domain(Vector{Int64}(),collect(1:5),5,5)))
+    push!(S.C,Constraint(S.D,"intersect",Domain(Vector{Int64}(),collect(1:5),0,0)))
 
 
     solve(io, S)

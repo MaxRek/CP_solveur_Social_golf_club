@@ -27,23 +27,32 @@ function solve(io,P :: CSP)
     gardefou = 1
     stop = false
 
-    while(!isempty(pile) && gardefou <= 20 && !stop)
+    while(!isempty(pile) && gardefou <= 2000 && !stop)
         Pp = pop!(pile)
-        #println(io, "_____________\nNouvelle itération \n gardefou = ", gardefou)
-        #print_CSP(io, 1, Pp)
+        println(io, "_____________\nNouvelle itération \n gardefou = ", gardefou, "nb d'élements dans la pile = ",length(pile))
+        
+        println(io,"\n--------CSP--------")
+        print_CSP(io, 1, Pp)
+        println(io,"----------------\n")
+        
         propagation(io, Pp)
         if(is_ended_CSP(io,Pp))
-            #println(io, "Pp is ended, checking for feasible on")
+            println(io, "---Pp is ended, checking for feasible on---")
             if(feasible_CSP(io,Pp))
                 stop = true
+                (println(io, "---Pp is valid, end of solving---\n"))
             else
-                #println(io, "Pp isn't valid, moving on")
+                println(io, "---Pp isn't valid, moving on---\n")
             end
         else
-            #println(io, "Pp isn't ended, spliting Pp")
+            println(io, "---Pp isn't valid, moving on---\n")
             split_domain(io, Pp, pile)
         end
         gardefou += 1
+    end
+
+    if(isempty(pile))
+        println(io,"--------------------------------\nLa pile est vide\nFin de résolution\n--------------------------")
     end
 
 end
@@ -58,22 +67,22 @@ function propagate(io, P :: CSP)
     end
   end
 
-function feasible_CSP(io, P :: CSP)
+  function feasible_CSP(io, P :: CSP)
     isItFeasible = true
-  for i in range(length(P.C))
-    isItFeasible = isItFeasible && check_feasibility(io, i, P.C[i].domains, P.C[i])
-  end
-    
-  return isItFeasible
-end
-
-function is_ended_CSP(io, Pp :: CSP)
-    isItOver = feasible_CSP(io, P :: CSP)
-    for i in D
-      isItOver = isItOver && i.up == [] #un domaine stable n'a plus d'éléments possibles à l'ajout, si fini tt domaine est stable
+    for i in 1:length(P.C)
+      isItFeasible = isItFeasible && check_feasibility(io, i, P.C[i].domains, P.C[i])
     end
-    return isItOver
-end
+      
+    return isItFeasible
+  end
+  
+  function is_ended_CSP(io, Pp :: CSP)
+      isItOver = feasible_CSP(io, Pp :: CSP)
+      for i in Pp.D
+        isItOver = isItOver && i.up == [] #un domaine stable n'a plus d'éléments possibles à l'ajout, si fini tt domaine est stable
+      end
+      return isItOver
+  end
 
 function print_CSP(io, v, P :: CSP)
     if(v == 0)

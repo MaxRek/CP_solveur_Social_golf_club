@@ -146,7 +146,7 @@ function isReachable(objectiveDomain, currentDomain)
         isPresent = isPresent || i==j
       end
       
-      for j in currentDomain.ub
+      for j in currentDomain.up
         isPresent = isPresent || i==j
       end
       allPresent = allPresent && isPresent
@@ -162,7 +162,7 @@ end
 function feasibility_union(io, v :: Int64, D :: Vector{Domain}, c :: Constraint)
     dtest = union_domain(D[1],D[2])
         for i in D[3:length(D)]
-            dtest = union_domain(dtest,D[i])
+            dtest = union_domain(dtest,i)
         end 
     return isReachable(c.result, dtest) 
 end
@@ -170,7 +170,7 @@ end
 function feasibility_intersect(io, v :: Int64, D :: Vector{Domain}, c :: Constraint)
     dtest = intersect_domain(D[1],D[2])
     for i in D[3:length(D)]
-        dtest = intersect_domain(dtest,D[i])
+        dtest = intersect_domain(dtest,i)
     end 
     return isReachable(c.result, dtest)   
 end
