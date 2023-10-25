@@ -7,7 +7,6 @@
 #       F <- F U G' and G <- G/G'
 #           where pour chq g dans G, il existe un xk appartenant à var(g), D'k != Dk -> g appartient à G'
 #               #functions whose at least one variable has been modified must be woken
-include("../src/dataStructure.jl")
 
 function propagation(io, P :: CSP)
     Pp = deepcopy(P)
