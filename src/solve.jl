@@ -29,18 +29,18 @@ function solve(io,P :: CSP)
 
     while(!isempty(pile) && gardefou <= 20 && !stop)
         Pp = pop!(pile)
-        println(io, "_____________\nNouvelle itération \n gardefou = ", gardefou)
-        print_CSP(io, 1, Pp)
+        #println(io, "_____________\nNouvelle itération \n gardefou = ", gardefou)
+        #print_CSP(io, 1, Pp)
         propagation(io, Pp)
         if(is_ended_CSP(io,Pp))
-            println(io, "Pp is ended, checking for feasible on")
+            #println(io, "Pp is ended, checking for feasible on")
             if(feasible_CSP(io,Pp))
                 stop = true
             else
-                println(io, "Pp isn't valid, moving on")
+                #println(io, "Pp isn't valid, moving on")
             end
         else
-            println(io, "Pp isn't ended, spliting Pp")
+            #println(io, "Pp isn't ended, spliting Pp")
             split_domain(io, Pp, pile)
         end
         gardefou += 1
@@ -48,25 +48,31 @@ function solve(io,P :: CSP)
 
 end
 
+function propagate(io, P :: CSP)
+    changed = true
+    while changed
+      changed = false
+      for c in P.C
+        changed = changed || filtrate(io, c)
+      end
+    end
+  end
+
 function feasible_CSP(io, P :: CSP)
-    return true
+    isItFeasible = true
+  for i in range(length(P.C))
+    isItFeasible = isItFeasible && check_feasibility(io, i, P.C[i].domains, P.C[i])
+  end
+    
+  return isItFeasible
 end
 
 function is_ended_CSP(io, Pp :: CSP)
-    bool = false ; stop = false
-    i = 1
-    while(i <= size(Pp.D)[1] && !stop)
-        d = Pp.D[i]
-        if(size(d.lb)[1] < d.minC || d.minC < d.maxC)
-            stop = true
-        end
-        i += 1
+    isItOver = feasible_CSP(io, P :: CSP)
+    for i in D
+      isItOver = isItOver && i.up == [] #un domaine stable n'a plus d'éléments possibles à l'ajout, si fini tt domaine est stable
     end
-    if(!stop)
-        bool = true
-    end
-
-    return bool
+    return isItOver
 end
 
 function print_CSP(io, v, P :: CSP)
