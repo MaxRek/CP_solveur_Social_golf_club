@@ -1,3 +1,9 @@
+mutable struct CSP
+    X :: Vector{Int64}
+    D :: Vector{Domain}
+    C :: Vector{Constraint}
+end
+
 #function solve(P = (X,D,C):CSP)-> Map<W,D>
 #S : Set(CSP)
 #P':CSP
@@ -35,7 +41,7 @@ function solve(io,P :: CSP)
             end
         else
             println(io, "Pp isn't ended, spliting Pp")
-            split(io, Pp, pile)
+            split_domain(io, Pp, pile)
         end
         gardefou += 1
     end
@@ -77,24 +83,6 @@ function print_CSP(io, v, P :: CSP)
             print_domain(io, v, P.D)
             println(io,"   -Constraint :")
             print_constraint(io, v, P.C)
-        end
-    end
-end
-
-function print_constraint(io, v, C :: Vector{Constraint})
-    if(v == 0)
-        i = 1
-        while(i<=size(C)[1])
-            println("C",i,", Concerned domain = ",C[i].domains,", operande = \"",C[i].operande,"\" result = "),print_domain(io,v,[C[i].result])
-            i += 1
-        end
-    else
-        if(v == 1)
-            i = 1
-            while(i<=size(C)[1])
-                println(io,"C",i,", Concerned domain = ",C[i].domains,", operande = \"",C[i].operande,"\" result = "),print_domain(io,v,[C[i].result])
-                i += 1
-            end
         end
     end
 end
