@@ -1,5 +1,5 @@
 mutable struct Constraint
-    domains :: Vector{Int64}
+    domains :: Vector{Domain}
     operande :: String
     result :: Domain
 end
@@ -8,14 +8,20 @@ function print_constraint(io, v, C :: Vector{Constraint})
     if(v == 0)
         i = 1
         while(i<=size(C)[1])
-            println("C",i,", Concerned domain = ",C[i].domains,", operande = \"",C[i].operande,"\" result = "),print_domain(io,v,[C[i].result])
+            println("C",i,", Concerned domain = ")
+            print_domain(io,0,C[i].domains)
+            println(", operande = \"",C[i].operande,"\" result = ")
+            print_domain(io,v,[C[i].result])
             i += 1
         end
     else
         if(v == 1)
             i = 1
             while(i<=size(C)[1])
-                println(io,"C",i,", Concerned domain = ",C[i].domains,", operande = \"",C[i].operande,"\" result = "),print_domain(io,v,[C[i].result])
+                println(io,"C",i,", Concerned domain = ")
+                print_domain(io,v,C[i].domains)
+                println(io,", operande = \"",C[i].operande,"\" result = ")
+                print_domain(io,v,[C[i].result])
                 i += 1
             end
         end

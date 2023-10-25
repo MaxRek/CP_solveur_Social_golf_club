@@ -31,12 +31,11 @@ function CP()
             Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1),
             Domain(Vector{Int64}(),Vector{Int64}([1,2,3,4,5]),1,1)
         ])
-        ,
-        Vector{Constraint}([
-            Constraint([1,2,3,4,5],"intersect", Domain([],[],0,0)),
-            Constraint([1,2,3,4,5],"union", Domain([1,2,3,4,5],[],5,5))
-        ])
+        ,Vector{Constraint}()
     )
+    push!(S.C,Constraint(S.D,"union",Domain(collect(1:5),Vector{Int64}(),5,5)))
+    push!(S.C,Constraint(S.D,"intersect",Domain(Vector{Int64}(),collect(1:5),5,5)))
+
 
     solve(io, S)
 
@@ -53,3 +52,5 @@ function parse_CSP(pathtoholder)
     end
     return CSPs
 end
+
+CP()
