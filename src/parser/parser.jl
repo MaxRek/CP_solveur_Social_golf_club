@@ -14,7 +14,7 @@ function getfname(pathtofolder)
         # traite chaque fichier du repertoire
         if f[1] != '.'
             # pas un fichier cache => conserver
-            println("fname = ", f)
+            #println("fname = ", f)
         else
             # fichier cache => supprimer
             flag[k] = false
@@ -86,7 +86,7 @@ function loadCP(fname)
                 for y in x:g
                     for i in 1:w-1
                         for j in i+1:w
-                            push!(r.C,Constraint(Vector{Int64}([(i-1)*g + x,(j-1)*g + y]),"intersect",Domain(Vector{Int64}(),Vector{Int64}(collect(1:q)),0,1)))
+                            #push!(r.C,Constraint(Vector{Int64}([(i-1)*g + x,(j-1)*g + y]),"intersect",Domain(Vector{Int64}(),Vector{Int64}(collect(1:q)),0,1)))
                         end 
                     end
                 end

@@ -48,13 +48,13 @@ constraint forall (i in 2..w) (
   return suppConstraints
 end
 
-function generateModelsTests(maxG, maxP, maxW)
-  for i in 1:maxP
-    for j in 1:maxG
-      for k in 1:maxW
-        fileName="in/modeles/modelP"*string(i)*"G"*string(j)*"W"*string(k)
-        writer(fileName*"Classic.mzn" , [i,j,k] , false)
-        writer(fileName*"Ameliorated.mzn", [i,j,k] , true)
+function generateModelsTests(maxG, maxS, maxW)
+  for w in 2:maxW
+    for s in 2:maxS
+      for g in w:maxG
+        fileName="in/modeles/mS"*string(s)*"G"*string(g)*"W"*string(w)
+        writer(fileName*"C.mzn" , [s,g,w] , false)
+        writer(fileName*"A.mzn", [s,g,w] , true)
       end
     end
   end

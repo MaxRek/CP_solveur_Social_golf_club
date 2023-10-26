@@ -20,41 +20,64 @@ end
 #   endwhile
 #   return null
 
-function solve(io,P :: CSP)
-    println(io,"je solve")
+function solve(io,v :: Int64 ,P :: CSP)
+    if(v == 1)
+        println(io,"je solve")
+    end
     pile = Stack{CSP}()
     push!(pile, P)
     gardefou = 1
     stop = false
+    r = 0
 
     while(!isempty(pile) && gardefou <= 2000 && !stop)
         Pp = pop!(pile)
-        println(io, "_____________\nNouvelle itération \n gardefou = ", gardefou, "nb d'élements dans la pile = ",length(pile))
-        
-        println(io,"\n--------CSP--------")
-        print_CSP(io, 1, Pp)
-        println(io,"----------------\n")
-        
-        propagation(io, Pp)
+        if(v == 1)
+            println(io, "_____________\nNouvelle itération \n gardefou = ", gardefou, "nb d'élements dans la pile = ",length(pile))
+            println(io,"\n--------CSP--------")
+            print_CSP(io, 1, Pp)
+            println(io,"----------------\n")
+        end
+
+        propagation(io,v, Pp)
+
+        if(v == 1)
+            println(io,"\n----Post propagation----")
+            print_CSP(io, 1, Pp)
+            println(io,"----------------\n")
+        end
+
         if(is_ended_CSP(io,Pp))
-            println(io, "---Pp is ended, checking for feasible on---")
+            if(v == 1)
+                println(io, "---Pp is ended, checking for feasible on---")
+            end
             if(feasible_CSP(io,Pp))
                 stop = true
-                println(io, "---Pp is valid, end of solving---\n")
+                if(v == 1)
+                    println(io, "---Pp is valid, end of solving---\n")
+                end
+                r = deepcopy(Pp.D)
             else
-                println(io, "---Pp isn't valid, moving on---\n")
+                if(v == 1)
+                    println(io, "---Pp isn't valid, moving on---\n")
+                end
             end
         else
-            println(io, "---Pp isn't valid, moving on---\n")
-            split_domain(io, Pp, pile)
+            if(v == 1)
+                println(io, "---Pp isn't valid, moving on---\n")
+            end
+            split_domain(io, v,Pp, pile)
         end
         gardefou += 1
     end
 
     if(isempty(pile))
-        println(io,"--------------------------------\nLa pile est vide\nFin de résolution\n--------------------------")
+        if(v == 1)
+            println(io,"--------------------------------\nLa pile est vide\nFin de résolution\n--------------------------")
+        end
+        r = 1
     end
-
+    return r
 end
 
 function feasible_CSP(io, P :: CSP)

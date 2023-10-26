@@ -1,21 +1,26 @@
-function split_domain(io, P :: CSP, pile :: Stack{CSP})
+function split_domain(io, v ::Int64, P :: CSP, pile :: Stack{CSP})
     #println(io,"Je split")
     i = 1
     d_not_finished = Vector{Int64}()
     for d in P.D
-        if(d.minC == size(d.lb)[1] || d.maxC == size(d.lb)[1])
+        if(d.minC != size(d.lb)[1] || d.maxC != size(d.lb)[1])
             append!(d_not_finished, i) 
         end
         i += 1
     end
-    println(io, "Domains non terminé : ",d_not_finished)
+    if(v == 1)
+        println(io, "Domains non terminé : ",d_not_finished)
+    end
     if(size(d_not_finished)[1] > 1)
         d_modify1 = 0 ; d_modify2 = 0
         while(d_modify1 == d_modify2)
             d_modify1 = d_not_finished[Int(round(rand()*((size(d_not_finished)[1]-1)))) + 1]
             d_modify2 = d_not_finished[Int(round(rand()*((size(d_not_finished)[1]-1)))) + 1]
         end
-        println(io, "d_modify1 = ", d_modify1,", d_modify2 = ",d_modify2)
+        if(v == 1)
+            println(io, "d_modify1 = ", d_modify1,", d_modify2 = ",d_modify2)
+        end
+        
         P1 = deepcopy(P) ; P2 = deepcopy(P)
 
         # println(io,"Avant split Domaines de P1, puis P2 :")
@@ -45,9 +50,12 @@ function split_domain(io, P :: CSP, pile :: Stack{CSP})
             
             # push!(pile,P1)
         else
-            println(io,"ERREUR : CSP terminé mais pas détécté\n ---------------------------")
-            print_CSP(io,1,P)
-            println(io,"----------------------------")
+            if(v == 1)
+                println(io,"ERREUR : CSP terminé mais pas détécté\n ---------------------------")
+                print_CSP(io,1,P)
+                println(io,"----------------------------")
+            end
+            
         end
     end
 end

@@ -70,7 +70,12 @@ function feasibility_union(io, v :: Int64, D :: Vector{Domain}, c :: Constraint)
 end
   
 function feasibility_intersect(io, v :: Int64, D :: Vector{Domain}, c :: Constraint)
-    dtest = intersect_domain(D[1],D[2])
+    if(length(c.domains)==1)
+        dtest = D[1]
+    else
+        dtest = intersect_domain(D[1],D[2])
+    end 
+
     for i in D[3:length(D)]
         dtest = intersect_domain(dtest,i)
     end 
