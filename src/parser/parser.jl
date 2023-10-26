@@ -14,7 +14,7 @@ function getfname(pathtofolder)
         # traite chaque fichier du repertoire
         if f[1] != '.'
             # pas un fichier cache => conserver
-            println("fname = ", f)
+            #println("fname = ", f)
         else
             # fichier cache => supprimer
             flag[k] = false
@@ -66,16 +66,18 @@ function loadCP(fname)
 
     #Contraintes
     #pour chaque semaines, tous les joueurs jouent
-    for i in weeks
-        push!(r.C,Constraint(r.D[collect((i-1)*g+1:i*g)],"union",Domain(collect(1:q),Vector{Int64}(),q,q)))
+    if(g > 1)
+        for i in weeks
+            push!(r.C,Constraint(collect((i-1)*g+1:i*g),"union",Domain(collect(1:q),Vector{Int64}(),q,q)))
+        end
     end
 
     #pour chaque semaine, tous les groupes sont remplis
-    for i in weeks
-        for j in groups
-            push!(r.C,Constraint(r.D[Vector{Int64}([i*j])],"cardinalities",Domain(Vector{Int64}(),Vector{Int64}(),p,p)))
-        end
-    end
+    # for i in weeks
+    #     for j in groups
+    #         push!(r.C,Constraint(r.D[Vector{Int64}([i*j])],"cardinalities",Domain(Vector{Int64}(),Vector{Int64}(),p,p)))
+    #     end
+    # end
 
     #pour chaque semaine, pour chaque groupe, il y a au plus une seule intersection entre deux groupes
     if w > 1
@@ -84,7 +86,7 @@ function loadCP(fname)
                 for y in x:g
                     for i in 1:w-1
                         for j in i+1:w
-                            push!(r.C,Constraint(r.D[Vector{Int64}([(i-1)*g + x,(j-1)*g + y])],"intersect",Domain(Vector{Int64}(),Vector{Int64}(collect(1:q)),0,1)))
+                            #push!(r.C,Constraint(Vector{Int64}([(i-1)*g + x,(j-1)*g + y]),"intersect",Domain(Vector{Int64}(),Vector{Int64}(collect(1:q)),0,1)))
                         end 
                     end
                 end
@@ -95,25 +97,28 @@ function loadCP(fname)
     if(contains(fname,"Ameliorated"))
         # Pour chaque semaine, le premier groupe contient le joueur 1
         for i in weeks
-            push!(r.C,Constraint(r.D[Vector{Int64}([(i-1)*g+1])],"intersect",Domain(Vector{Int64}([1]),Vector{Int64}(),1,1)))
+            push!(r.C,Constraint(Vector{Int64}([(i-1)*g+1]),"intersect",Domain(Vector{Int64}([1]),Vector{Int64}(),1,1)))
         end
 
         # Initialisation de la première ligne
         for i in 1:g
-            push!(r.C,Constraint(r.D[Vector{Int64}([i])],"intersect",Domain(Vector{Int64}(collect((i-1)*p+1:i*p)),Vector{Int64}(),p,p)))
+            push!(r.C,Constraint(Vector{Int64}([i]),"intersect",Domain(Vector{Int64}(collect((i-1)*p+1:i*p)),Vector{Int64}(),p,p)))
         end
 
-        # Pour chaque semaine apres la premiere, du second au dernier joueur, il sera toujours dans le même groupe de la semaine
-        for i in 2:w
-            for j in 2:p
-                push!(r.C, Constraint(r.D[Vector{Int64}([(i-1)*g + j])], "intersect", Domain(Vector{Int64}([j]),Vector{Int64}(),1,1)))
+        if(w < 1)
+            # Pour chaque semaine apres la premiere, du second au dernier joueur, il sera toujours dans le même groupe de la semaine
+            for i in 2:w
+                for j in 2:p
+                    push!(r.C, Constraint(Vector{Int64}([(i-1)*g + j]), "intersect", Domain(Vector{Int64}([j]),Vector{Int64}(),1,1)))
+                end
             end
-        end
 
-        # POur chaque semaine apres la première, le joueur = nb de joueurs + numéro de la semaine se retrouve dans le premier gourpe de la semaine
-        for i in 2:w
-            push!(r.C, Constraint(r.D[Vector{Int64}([g*(i-1)+1])], "intersect", Domain(Vector{Int64}([p+(i-1)]),Vector{Int64}(),1,1)))
-        end
+            # POur chaque semaine apres la première, le joueur = nb de joueurs + numéro de la semaine se retrouve dans le premier gourpe de la semaine
+            for i in 2:w
+                push!(r.C, Constraint(Vector{Int64}([g*(i-1)+1]), "intersect", Domain(Vector{Int64}([p+(i-1)]),Vector{Int64}(),1,1)))
+            end
+
+        end 
     end
 
     return r

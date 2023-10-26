@@ -20,53 +20,81 @@ end
 #   endwhile
 #   return null
 
-function solve(io,P :: CSP)
-    println(io,"je solve")
+function solve(io,v :: Int64 ,P :: CSP)
+    if(v == 1)
+        println(io,"je solve")
+    end
     pile = Stack{CSP}()
     push!(pile, P)
     gardefou = 1
     stop = false
+    r = 0
 
-    while(!isempty(pile) && gardefou <= 20 && !stop)
+    while(!isempty(pile) && gardefou <= 2000 && !stop)
         Pp = pop!(pile)
-        println(io, "_____________\nNouvelle itération \n gardefou = ", gardefou)
-        print_CSP(io, 1, Pp)
-        propagation(io, Pp)
+        if(v == 1)
+            println(io, "_____________\nNouvelle itération \n gardefou = ", gardefou, "nb d'élements dans la pile = ",length(pile))
+            println(io,"\n--------CSP--------")
+            print_CSP(io, 1, Pp)
+            println(io,"----------------\n")
+        end
+
+        propagation(io,v, Pp)
+
+        if(v == 1)
+            println(io,"\n----Post propagation----")
+            print_CSP(io, 1, Pp)
+            println(io,"----------------\n")
+        end
+
         if(is_ended_CSP(io,Pp))
-            println(io, "Pp is ended, checking for feasible on")
+            if(v == 1)
+                println(io, "---Pp is ended, checking for feasible on---")
+            end
             if(feasible_CSP(io,Pp))
                 stop = true
+                if(v == 1)
+                    println(io, "---Pp is valid, end of solving---\n")
+                end
+                r = deepcopy(Pp.D)
             else
-                println(io, "Pp isn't valid, moving on")
+                if(v == 1)
+                    println(io, "---Pp isn't valid, moving on---\n")
+                end
             end
         else
-            println(io, "Pp isn't ended, spliting Pp")
-            split_domain(io, Pp, pile)
+            if(v == 1)
+                println(io, "---Pp isn't valid, moving on---\n")
+            end
+            split_domain(io, v,Pp, pile)
         end
         gardefou += 1
     end
 
+    if(isempty(pile))
+        if(v == 1)
+            println(io,"--------------------------------\nLa pile est vide\nFin de résolution\n--------------------------")
+        end
+        r = 1
+    end
+    return r
 end
 
 function feasible_CSP(io, P :: CSP)
-    return true
+    isItFeasible = true
+    for i in 1:length(P.C)
+        isItFeasible = isItFeasible && check_feasibility(io, i, P.D[P.C[i].domains], P.C[i])
+    end
+        
+    return isItFeasible
 end
 
 function is_ended_CSP(io, Pp :: CSP)
-    bool = false ; stop = false
-    i = 1
-    while(i <= size(Pp.D)[1] && !stop)
-        d = Pp.D[i]
-        if(size(d.lb)[1] < d.minC || d.minC < d.maxC)
-            stop = true
-        end
-        i += 1
+    isItOver = feasible_CSP(io, Pp :: CSP)
+    for i in Pp.D
+        isItOver = isItOver && i.up == [] #un domaine stable n'a plus d'éléments possibles à l'ajout, si fini tt domaine est stable
     end
-    if(!stop)
-        bool = true
-    end
-
-    return bool
+    return isItOver
 end
 
 function print_CSP(io, v, P :: CSP)
@@ -75,7 +103,7 @@ function print_CSP(io, v, P :: CSP)
         println("   -Domains :")
         print_domain(io, v, P.D)
         println("   -Constraint :")
-        print_constraint(io, v, P.C)
+        print_constraint(io, v,P.C)
     else
         if(v == 1)
             println(io,"CSP :")
