@@ -20,7 +20,7 @@ end
 #   endwhile
 #   return null
 
-function solve(io,v :: Int64 ,P :: CSP)
+function solve(io,v :: Int64, limite :: Int64 ,P :: CSP)
     if(v == 1)
         println(io,"je solve")
     end
@@ -30,7 +30,7 @@ function solve(io,v :: Int64 ,P :: CSP)
     stop = false
     r = 0
 
-    while(!isempty(pile) && gardefou <= 2000 && !stop)
+    while(!isempty(pile) && gardefou <= limite && !stop)
         Pp = pop!(pile)
         if(v == 1)
             println(io, "_____________\nNouvelle itération \n gardefou = ", gardefou, "nb d'élements dans la pile = ",length(pile))

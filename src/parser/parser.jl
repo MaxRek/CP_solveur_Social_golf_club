@@ -73,11 +73,11 @@ function loadCP(fname)
     end
 
     #pour chaque semaine, tous les groupes sont remplis
-    # for i in weeks
-    #     for j in groups
-    #         push!(r.C,Constraint(r.D[Vector{Int64}([i*j])],"cardinalities",Domain(Vector{Int64}(),Vector{Int64}(),p,p)))
-    #     end
-    # end
+    for i in weeks
+        for j in groups
+            push!(r.C,Constraint(r.D[Vector{Int64}([i*j])],"cardinalities",Domain(Vector{Int64}(),Vector{Int64}(),p,p)))
+        end
+    end
 
     #pour chaque semaine, pour chaque groupe, il y a au plus une seule intersection entre deux groupes
     if w > 1
@@ -86,7 +86,7 @@ function loadCP(fname)
                 for y in x:g
                     for i in 1:w-1
                         for j in i+1:w
-                            #push!(r.C,Constraint(Vector{Int64}([(i-1)*g + x,(j-1)*g + y]),"intersect",Domain(Vector{Int64}(),Vector{Int64}(collect(1:q)),0,1)))
+                            push!(r.C,Constraint(Vector{Int64}([(i-1)*g + x,(j-1)*g + y]),"intersect",Domain(Vector{Int64}(),Vector{Int64}(collect(1:q)),0,1)))
                         end 
                     end
                 end
