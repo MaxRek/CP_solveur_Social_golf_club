@@ -7,37 +7,44 @@ end
     
 function addLb(d :: Domain, v :: Vector{Int64})
     for j in v
-        if(!(j in d.lb))
-            if(size(d.lb)[1]!=0)
-                if(j>d.lb[1])
-                    stop = false
-                    i = 1
-                    while(i < size(d.lb)[1] && !stop )
-                        if(d.lb[i+1]<j)
-                            i+=1
-                        else
+        trouve = false
+        if(d.lb!=[])
+            if(j>d.lb[1])
+                stop = false
+                i = 1
+                while(i < size(d.lb)[1] && !stop && !trouve)
+                    if(d.lb[i+1]<j)
+                        i+=1
+                    else
+                        if(d.lb[i] == j)
                             stop = true
+                            trouve == true
+                        else
+                            stop = true  
                         end
                     end
-                    if(!stop)
-                        append!(d.lb,j)
-                    else
+                end
+                if(!stop)
+                    append!(d.lb,j)
+                else
+                    if(!trouve)
                         insert!(d.lb,i+1,j)
                     end
-                else
-                    insert!(d.lb,1,j)
                 end
             else
-                append!(d.lb,j)
+                insert!(d.lb,1,j)
             end
+        else
+            append!(d.lb,j)
         end
     end
 end
 
 function addUp(d :: Domain, v :: Vector{Int64})
     for j in v
-        if(!(j in d.up)&&!(j in d.lb))
-            if(size(d.up)[1]!=0)
+        if(!(j in d.lb))
+            if(d.up!=[])
+                trouve = false
                 if(j>d.up[1])
                     stop = false
                     i = 1
@@ -45,13 +52,20 @@ function addUp(d :: Domain, v :: Vector{Int64})
                         if(d.up[i+1]<j)
                             i+=1
                         else
-                            stop = true
+                            if(d.up[i+1] == j)
+                                stop = true
+                                trouve = true
+                            else
+                                stop = true
+                            end
                         end
                     end
-                    if(!stop)
-                        append!(d.up,j)
-                    else
-                        insert!(d.up,i+1,j)
+                    if(!trouve)
+                        if(!stop )
+                            append!(d.up,j)
+                        else
+                            insert!(d.up,i+1,j)
+                        end
                     end
                 else
                     insert!(d.up,1,j)
@@ -73,17 +87,21 @@ function del(d :: Domain, v :: Vector{Int64})
             #println("        j in d.lb, j = ",j,", d.lb = ",d.lb)
             if(j!=d.lb[1])
                 stop = false
+                trouve = false
                 i = 1
                 while(i <= size(d.lb)[1] && !stop )
-                    if(d.lb[i]!=j)
+                    if(d.lb[i]>j)
                         i+=1
                     else
-                        #println("          j was found in d.lb")
-
-                        stop = true
+                        if(d.lb[i] == j)
+                            stop = true
+                            trouve == true
+                        else
+                            stop = true  
+                        end#println("          j was found in d.lb")
                     end
                 end
-                if(stop)
+                if(trouve)
                     popat!(d.lb,i)
                 end
             else
@@ -95,16 +113,21 @@ function del(d :: Domain, v :: Vector{Int64})
                 #println("        j in d.up, j = ",j,", d.up = ",d.up)
                 if(j!=d.up[1])
                     stop = false
+                    trouve = false
                     i = 2
                     while(i <= size(d.up)[1] && !stop )
-                        if(d.up[i]!=j)
+                        if(d.up[i]>j)
                             i+=1
                         else
-                            stop = true
-                            #println("          j was found in d.up")
+                            if(d.lb[i] == j)
+                                stop = true
+                                trouve == true
+                            else
+                                stop = true  
+                            end#println("          j was found in d.lb")
                         end
                     end
-                    if(stop)
+                    if(trouve)
                         popat!(d.up,i)
                     end
                 else

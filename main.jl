@@ -27,6 +27,28 @@ function parse_CSP(pathtoholder)
 end
 
 function main()
+    
+    #Input : 
+    #écriture de logs ? Attention, les logs peuvent être lourds
+    printlog = 0
+
+    #Nb d'itérations maximum dans le solveur
+    limite = 2000
+
+    #s,g,w
+    s = 4 ; g = 4 ; w = 4
+
+    #noms des logs
+    name = Dates.format(now(),"ddmm-HHMM")
+    result = open(String("out/result_"*name*".txt"), "w")
+    if(printlog == 1)
+        log = open(String("out/log_"*name*".txt"), "w")
+    else
+        log = 0
+    end
+
+    path = ("in/modeles/")
+
     #Log & modeles
     if(!isdir("out"))
         mkdir("out")
@@ -39,35 +61,10 @@ function main()
         generateModelsTests(4,4,4)
     end
 
-    name = Dates.format(now(),"ddmm-HHMM")
-    printlog = 0
-    
-    if(printlog == 1)
-        log = open(String("out/log_"*name*".txt"), "w")
-    else
-        log = 0
-    end
-    
-    result = open(String("out/result_"*name*".txt"), "w")
-    path = ("in/modeles/")
-
     fnames, CSPs = parse_CSP(path)
-    
     time = zeros(1,length(fnames))
     status = Array{String}(undef,length(fnames))
-    # i = 20
-    # println(fnames[i])
-    # solve(log,CSPs[i])
-
-    # i = 11
-    # println(fnames[i])
-    # solve(log,CSPs[i])
-
-    # i = length(fnames)
-    # println(fnames[i])
-    # solve(log,CSPs[i])
     
-
     for i in 1:length(fnames)
         time[i] = @elapsed r = solve(log, printlog,CSPs[i])
         if(typeof(r) == Int64)
@@ -92,4 +89,5 @@ function main()
         close(log)
     end
 end
+
 main()

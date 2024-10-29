@@ -51,7 +51,7 @@ end
 function generateModelsTests(maxG, maxS, maxW)
   for w in 2:maxW
     for s in 2:maxS
-      for g in w:maxG
+      for g in 2:maxG
         fileName="in/modeles/mS"*string(s)*"G"*string(g)*"W"*string(w)
         writer(fileName*"C.mzn" , [s,g,w] , false)
         writer(fileName*"A.mzn", [s,g,w] , true)
