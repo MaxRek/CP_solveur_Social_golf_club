@@ -16,14 +16,16 @@ Pour plus d'informations sur le problème, voir le beamer ou le rendu de compte 
 Solveur rendu incomplet, l'étape du filtrage est érroné, présence de faux positives et faux négatifs dans les solutions rendues.
 Intentions de reprendre cette partie pour corriger les erreurs.
 
-__
+
+___
+
 
 # Constraint programming solver for Social golfer club
 
 Project by Coralie MARCHAU and Maxime REKAR 
 2nd year of Master's degree in Computer Science, focused on Operations Research
 2023-2024
-For more informations, see the beamer (at the end of the french presentation)
+For more informations, see the beamer (after the french presentation)
 
 ## Results
 
